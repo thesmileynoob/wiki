@@ -3,7 +3,6 @@ import wasabi
 import flask
 import jinja2
 
-from models.article import Page
 
 
 TEMPLATE_DIR = 'static/templates'
