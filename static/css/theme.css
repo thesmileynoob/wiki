@@ -1,0 +1,44 @@
+body {
+    background-color: #ddd;
+    margin: 0;
+}
+
+.topbar {
+    background-color: #fff;
+    height: 50px;
+    margin: 0 0 0 10em;
+}
+
+.sidebar {
+    background-color: azure;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 10em;
+}
+
+.sidebar #logo {
+    display: block;
+    width: 10em;
+    height: 10em;;
+}
+
+.sidebar .nav .navlink {
+    display: block;
+    padding: 5px;
+}
+
+.contentbox {
+    margin: 10px 0 0 10em;
+    background-color: white;
+    border: 2px solid black;
+    min-height: 500px;
+}
+
+.contentbox .title {
+    font-family: monospace;
+}
+
+.contentbox .body {
+    font-family: monospace;
+}
