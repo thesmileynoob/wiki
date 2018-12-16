@@ -1,26 +1,41 @@
 body {
-    background-color: #ddd;
+    background-color: #eee;
     margin: 0;
 }
 
 .topbar {
-    background-color: #fff;
     height: 50px;
     margin: 0 0 0 10em;
 }
 
 .sidebar {
-    background-color: azure;
     position: absolute;
     top: 0;
     left: 0;
     width: 10em;
 }
 
-.sidebar #logo {
+.sidebar #logobox {
+    margin: 1em 1em;
+    text-align: center;
+}
+
+.sidebar #logobox #logo {
     display: block;
-    width: 10em;
-    height: 10em;;
+    width: 8em;
+    height: 8em;;
+}
+
+@font-face {
+    font-family: logoFont;
+    src: url('/static/fonts/logo_font.otf');
+}
+
+.sidebar #logobox #logo_title {
+    font-size: 55px;
+    font-family: logoFont;
+    color: black;
+    text-decoration: none;
 }
 
 .sidebar .nav .navlink {
@@ -29,16 +44,26 @@ body {
 }
 
 .contentbox {
-    margin: 10px 0 0 10em;
+    margin: 0 0 0 10em;
     background-color: white;
-    border: 2px solid black;
-    min-height: 500px;
+    border: 1px solid #666;
+    min-height: 400px;
 }
 
-.contentbox .title {
-    font-family: monospace;
+.contentbox #page {
+    padding: 20px;
 }
 
-.contentbox .body {
+.contentbox #page hr {
+    border-top: 1px solid #eee;
+}
+
+.contentbox #page #title {
     font-family: monospace;
+    font-size: 2em;
+}
+
+.contentbox #page #content {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.2em;
 }
