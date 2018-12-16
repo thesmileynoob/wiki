@@ -2,6 +2,8 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
+from . import settings
+
 """
 https://en.wikipedia.org/wiki/Wikipedia:Manual_of_Style/Layout
 Represents a wiki page:
@@ -27,11 +29,10 @@ Revision:
     notes: str
 """
 
-DBNAME = 'wiki.db'
-
 Base = declarative_base()
-engine = create_engine(f"sqlite:///{DBNAME}", echo=True)
+engine = create_engine(f"sqlite:///{settings.DBNAME}")
 # engine = create_engine(f"sqlite:///:memory:", echo=True)
+
 
 class Page(Base):
     __tablename__ = 'pages'
@@ -60,25 +61,28 @@ class Category(Base):
     def __repr__(self):
         return f"<Category(id: {self.id}, name: '{self.name}')>"
 
+
 class Revision(Base):
     __tablename__ = 'revisions'
 
     id: int = Column(Integer, primary_key=True)
     page_id: int = Column(Integer, ForeignKey('pages.id'))
     content: str = Column(String)
-    timestamp: int = Column(Integer) # Unix epoch
+    timestamp: int = Column(Integer)  # Unix epoch
     notes: str = Column(String)
 
     page: Page = relationship('Page', back_populates='revisions')
 
     def __repr__(self):
-        return f"<Rev(id: {self.id}, pid: {self.page_id}, content: '{self.content}')>"
+        return f"< Rev(id: {self.id}, pid: {self.page_id}, content: '{self.content}') >"
 
 
 # Create the tables if they do not exist already
 Base.metadata.create_all(engine)
 
 # TODO Delet this
+
+
 def api_test(pagename):
     Session = sessionmaker(bind=engine)
     session = Session()
@@ -88,6 +92,8 @@ def api_test(pagename):
     session.add(page)
     session.add(r1)
     session.commit()
+
+    r2 = Revision(page_id=1, content='second revision')
 
     page.revisions.append(r2)  # HOLY SMOKES THIS WORKS!!!
     session.commit()
