@@ -6,8 +6,7 @@ import flask
 import jinja2
 
 from wiki import config
-from wiki import page
-from wiki.page import Page, Revision
+from wiki.page import Page, Revision, new_session
 
 log = wasabi.Printer()
 flask_app = flask.Flask('Wiki')
@@ -19,8 +18,13 @@ jenv = jinja2.Environment(
 
 @flask_app.route('/')
 def homepage():
+    session = new_session()
+    page = session.query(Page).filter_by(id=1).one()
+    rev = page.revisions[0]
+    session.close()
+
     homepage = jenv.get_template('homepage.html')
-    return homepage.render(title='Lorem Ipsum', name='Wiki')
+    return homepage.render(title=page.title, content=rev.content)
 
 
 @flask_app.route('/todo')
@@ -57,7 +61,7 @@ def generate_pages():
     p3 = Page(title='Stock_Market')
     r3 = Revision(content=pages[2])
 
-    session = page.new_session()
+    session = new_session()
 
     session.add(p1)
     session.add(p2)
