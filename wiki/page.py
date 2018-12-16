@@ -80,22 +80,8 @@ class Revision(Base):
 # Create the tables if they do not exist already
 Base.metadata.create_all(engine)
 
-# TODO Delet this
-
-
-def api_test(pagename):
+def new_session():
+    """ Helper function to generate a session object """
     Session = sessionmaker(bind=engine)
-    session = Session()
-    page = Page(title=pagename)
-    r1 = Revision(page_id=1, content='first revision')
+    return Session()
 
-    session.add(page)
-    session.add(r1)
-    session.commit()
-
-    r2 = Revision(page_id=1, content='second revision')
-
-    page.revisions.append(r2)  # HOLY SMOKES THIS WORKS!!!
-    session.commit()
-
-    session.close()
