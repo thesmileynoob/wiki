@@ -3,17 +3,18 @@ import os
 
 import wasabi
 import flask
-import jinja2
+# import jinja2
 
 from wiki import config
 from wiki.page import Page, Revision, new_session
 
 log = wasabi.Printer()
 flask_app = flask.Flask('Wiki')
-jenv = jinja2.Environment(
-    loader=jinja2.PackageLoader(__name__, config.TEMPLATE_DIR),
-    autoescape=jinja2.select_autoescape(['html', 'xml'])
-)
+
+# jenv = jinja2.Environment(
+#     loader=jinja2.PackageLoader(__name__, config.TEMPLATE_DIR),
+#     autoescape=jinja2.select_autoescape(['html', 'xml'])
+# )
 
 
 @flask_app.route('/')
@@ -23,8 +24,10 @@ def homepage():
     num_pages = len(pages)
     session.close()
     log.warn(f"{num_pages} pages")
-    homepage = jenv.get_template('home.html')
-    return homepage.render(num_pages=num_pages, pages=pages)
+    # homepage = jenv.get_template('home.html')
+    # return homepage.render(num_pages=num_pages, pages=pages)
+    return flask.render_template('home.html', num_pages=num_pages,
+                                 pages=pages)
 
 
 @flask_app.route('/wiki/<title>')
@@ -36,20 +39,20 @@ def page_view(title):
     rev = page.revisions[0]
     session.close()
 
-    homepage = jenv.get_template('page.html')
-    return homepage.render(title=page.title, content=rev.content)
+    # homepage = jenv.get_template('page.html')
+    # return homepage.render(title=page.title, content=rev.content)
+    return flask.render_template('page.html', title=page.title,
+                                 content=rev.content)
 
 
 @flask_app.route('/todo')
 def todo():
-    template = jenv.get_template('todo.html')
-    return template.render()
+    return flask.render_template('todo.html')
 
 
 @flask_app.route('/settings')
 def settings():
-    template = jenv.get_template('settings.html')
-    return template.render()
+    return flask.render_template('settings.html')
 
 
 @flask_app.route('/generate')
