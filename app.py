@@ -19,11 +19,24 @@ jenv = jinja2.Environment(
 @flask_app.route('/')
 def homepage():
     session = new_session()
-    page = session.query(Page).filter_by(id=1).one()
+    pages = session.query(Page).all()
+    num_pages = len(pages)
+    session.close()
+    log.warn(f"{num_pages} pages")
+    homepage = jenv.get_template('home.html')
+    return homepage.render(num_pages=num_pages, pages=pages)
+
+
+@flask_app.route('/wiki/<title>')
+def page_view(title):
+    session = new_session()
+    page = session.query(Page).filter_by(title=title).one()
+    if not page:
+        return 'No match found'
     rev = page.revisions[0]
     session.close()
 
-    homepage = jenv.get_template('homepage.html')
+    homepage = jenv.get_template('page.html')
     return homepage.render(title=page.title, content=rev.content)
 
 

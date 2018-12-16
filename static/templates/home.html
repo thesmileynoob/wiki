@@ -1,0 +1,19 @@
+{% extends 'wiki_base.html' %}
+
+{% block title %} Home {% endblock title %}
+
+{% block content %}
+
+
+<div>
+    Welcome to wiki, this is your custom home page!
+    <h1>Total {{num_pages}} pages!</h1>
+    <ol>
+        {% for page in pages %}
+            <li><a href="/wiki/{{ page.title }}">{{ page.title }}</a></li>
+        {% endfor %}
+    </ol>
+</div>
+
+
+{% endblock content %}

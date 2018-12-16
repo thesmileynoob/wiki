@@ -1,5 +1,14 @@
+{% extends 'wiki_base.html' %}
+
+{% block title %} {{title}}  {% endblock title %}
+
+{% block content %}
+
 <div id="page">
     <div id="title">{{ title }}</div>
     <hr>
     <div id="content">{{ content }}</div>
 </div>
+
+
+{% endblock content %}
