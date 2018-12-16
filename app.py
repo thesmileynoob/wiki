@@ -3,18 +3,12 @@ import os
 
 import wasabi
 import flask
-# import jinja2
 
 from wiki import config
 from wiki.page import Page, Revision, new_session
 
 log = wasabi.Printer()
 flask_app = flask.Flask('Wiki')
-
-# jenv = jinja2.Environment(
-#     loader=jinja2.PackageLoader(__name__, config.TEMPLATE_DIR),
-#     autoescape=jinja2.select_autoescape(['html', 'xml'])
-# )
 
 
 @flask_app.route('/')
@@ -23,9 +17,8 @@ def homepage():
     pages = session.query(Page).all()
     num_pages = len(pages)
     session.close()
-    log.warn(f"{num_pages} pages")
-    # homepage = jenv.get_template('home.html')
-    # return homepage.render(num_pages=num_pages, pages=pages)
+
+    log.info(f"{num_pages} pages")
     return flask.render_template('home.html', num_pages=num_pages,
                                  pages=pages)
 
@@ -39,8 +32,6 @@ def page_view(title):
     rev = page.revisions[0]
     session.close()
 
-    # homepage = jenv.get_template('page.html')
-    # return homepage.render(title=page.title, content=rev.content)
     return flask.render_template('page.html', title=page.title,
                                  content=rev.content)
 

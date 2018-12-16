@@ -80,8 +80,8 @@ class Revision(Base):
 # Create the tables if they do not exist already
 Base.metadata.create_all(engine)
 
+
 def new_session():
     """ Helper function to generate a session object """
     Session = sessionmaker(bind=engine)
     return Session()
-
