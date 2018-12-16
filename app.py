@@ -12,7 +12,7 @@ flask_app = flask.Flask('Wiki')
 
 
 @flask_app.route('/')
-def homepage():
+def homepage_view():
     session = new_session()
     pages = session.query(Page).all()
     num_pages = len(pages)
@@ -37,7 +37,7 @@ def page_view(title):
 
 
 @flask_app.route('/todo')
-def todo():
+def todo_view():
     return flask.render_template('todo.html')
 
 
