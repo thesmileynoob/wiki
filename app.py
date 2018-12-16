@@ -19,8 +19,8 @@ jenv = jinja2.Environment(
 
 @flask_app.route('/')
 def homepage():
-    template = jenv.get_template('homepage.html')
-    return template.render(title='Lorem Ipsum', name='akshay')
+    homepage = jenv.get_template('homepage.html')
+    return homepage.render(title='Lorem Ipsum', name='Wiki')
 
 
 @flask_app.route('/todo')
@@ -34,6 +34,7 @@ def settings():
     template = jenv.get_template('settings.html')
     return template.render()
 
+
 @flask_app.route('/generate')
 def generate_pages():
     """ Generate dummy pages for testing """
@@ -43,7 +44,7 @@ def generate_pages():
 
     with open('static/dummy_data.txt', 'r') as f:
         data = f.read()
-    
+
     pages = data.split('======')
     assert len(pages) == 3
 

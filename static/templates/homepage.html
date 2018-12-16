@@ -11,18 +11,11 @@
 
 <body>
 
-    <div class="sidebar">
-        <img src="/static/images/logo.png" alt="wiki logo" id="logo">
-        <div class="nav">
-            <a href="/" class="navlink">Home</a>
-            <a href="/settings" class="navlink">Settings</a>
-            <a href="/todo" class="navlink">ToDo</a>
-            <a href="/generate" class="navlink">Generate Pages</a>
-        </div>
-    </div>
+    {% include 'sidebar.html' %}
 
     <div class="topbar">
-        <input type="text" name="Search" id="search" placeholder="Search">
+        <label for="search">Search</label>
+        <input type="text" name="search" id="search" placeholder="Search">
     </div>
 
     <div class="contentbox">
