@@ -3,13 +3,13 @@ import wasabi
 import flask
 import jinja2
 
-from wiki import settings
+from wiki import config
 from wiki import page
 
 log = wasabi.Printer()
 flask_app = flask.Flask('Wiki')
 jenv = jinja2.Environment(
-    loader=jinja2.PackageLoader(__name__, settings.TEMPLATE_DIR),
+    loader=jinja2.PackageLoader(__name__, config.TEMPLATE_DIR),
     autoescape=jinja2.select_autoescape(['html', 'xml'])
 )
 

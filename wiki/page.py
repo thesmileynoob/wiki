@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
-from . import settings
+from . import config
 
 """
 https://en.wikipedia.org/wiki/Wikipedia:Manual_of_Style/Layout
@@ -30,7 +30,7 @@ Revision:
 """
 
 Base = declarative_base()
-engine = create_engine(f"sqlite:///{settings.DBNAME}")
+engine = create_engine(f"sqlite:///{config.DBNAME}")
 # engine = create_engine(f"sqlite:///:memory:", echo=True)
 
 
