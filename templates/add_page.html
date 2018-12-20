@@ -1,0 +1,52 @@
+{% extends 'wiki_base.html' %}
+
+{% block title %} {{title}} {% endblock title %}
+
+{% block content %}
+
+<form action="/add" method="post" id="add_page_form">
+    <h3> Add a page</h3>
+    <fieldset>
+        <legend>Page information</legend>
+
+        <div>
+            <label for="page_title">Title</label>
+            <input autofocus type="text" name="page_title" id="page_title">
+        </div>
+
+        <div>
+            <label for="page_flags">Flags</label>
+            <input type="text" name="page_flags" id="page_flags">
+        </div>
+
+        <div>
+            <label for="page_notes">Notes</label>
+            <input type="text" name="page_notes" id="page_notes">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Page Categories</legend>
+        <div>
+            <label for="page_category">Categories</label>
+            <input type="text" name="page_category" id="page_category">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Revision</legend>
+        <div>
+            <label for="rev_content">Content</label>
+            <textarea name="rev_content" id="rev_content"></textarea>
+        </div>
+
+        <div>
+            <label for="rev_note">Note</label>
+            <input type="text" name="rev_note" id="rev_note"></input>
+        </div>
+    </fieldset>
+
+    <button type="submit">Create!</button>
+</form>
+
+{% endblock content %}
