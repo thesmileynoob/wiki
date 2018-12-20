@@ -1,0 +1,67 @@
+form {
+    display: block;
+    width: 60%;
+    margin: 0;
+    box-sizing: border-box;
+    /* border: 2px solid black; */
+    padding: 10px;
+}
+
+form fieldset {
+    margin: 0;
+    margin-bottom: 10px;
+    border: none;
+    padding: 0;
+    /* border-bottom: 1px solid #666; */
+    /* -webkit-box-shadow: 6px 10px 17px -3px rgba(0,0,0,0.75);
+    -moz-box-shadow: 6px 10px 17px -3px rgba(0,0,0,0.75);
+    box-shadow: 6px 10px 17px -3px rgba(0,0,0,0.75); */
+}
+
+/* Basic element of all forms (no special class required) */
+form fieldset>div {
+    display: block;
+    padding: 10px 10px 10px 0px;
+    margin: 5px 0;
+    /* border: 1px solid blanchedalmond; */
+}
+
+form legend {
+    display: none;
+    color: #666;
+    text-align: center;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: lighter;
+}
+
+form input {
+    font-family: monospace;
+    border: 1px hidden rgba(0, 0, 0, 0.3);
+    border-bottom-style: solid; 
+    width: 100%;
+    font-size: 1.2em;
+}
+
+form input:focus {
+    border-width: 2px;
+    border-color: rgba(0, 0, 0, 0.6)
+}
+
+form textarea:focus {
+    border-width: 2px;
+    border-color: rgba(0, 0, 0, 0.6)
+}
+
+form textarea {
+    display: block;
+    width: 100%;
+    min-height: 25em;
+    height: auto;
+    resize: vertical;
+    font-size: 1.3em;
+    overflow: auto;
+}

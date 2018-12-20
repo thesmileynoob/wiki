@@ -26,11 +26,6 @@ body {
     height: 8em;;
 }
 
-@font-face {
-    font-family: logoFont;
-    src: url('/static/fonts/logo_font.otf');
-}
-
 .sidebar #logobox #logo_title {
     font-size: 55px;
     font-family: logoFont;
