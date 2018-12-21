@@ -1,0 +1,20 @@
+{% extends 'components/base.html' %}
+
+<!-- Redirect to home page -->
+{% block head %} 
+<meta http-equiv="refresh" content="3;url=/" />
+{% endblock head %}
+
+{% block title %} {{ title }} {% endblock title %}
+
+{% block content %}
+
+<div>
+    {{ message }}
+</div>
+<hr>
+<div>
+    Redirecting in 3 sec...
+</div>
+
+{% endblock content %}
