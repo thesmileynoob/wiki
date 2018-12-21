@@ -1,6 +1,24 @@
+/* variables */
+:root {
+    --logo-color: #33ff00;
+    --link-color: #ffcc00;
+    --text-color: #fff;
+
+    /* Background color of the whole document */
+    --base-color-bg: rgb(40, 40, 40);
+    /* Background color of the .contentbox */
+    --base-color-fg: rgb(60, 60, 60);
+
+}
+
 body {
-    background-color: #eee;
+    background-color: var(--base-color-bg);
     margin: 0;
+    color: var(--text-color) !important;
+}
+
+body a {
+    color: var(--link-color);
 }
 
 .topbar {
@@ -22,27 +40,34 @@ body {
 
 .sidebar #logobox #logo {
     display: block;
-    width: 8em;
-    height: 8em;;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 
 .sidebar #logobox #logo_title {
     font-size: 55px;
     font-family: logoFont;
-    color: black;
+    color: var(--logo-color);
     text-decoration: none;
 }
 
-.sidebar .nav .navlink {
+/* sidebar links */
+.sidebar nav *{
     display: block;
+    color: var(--link-color);
     padding: 5px;
+    font-size: 1.2em;
 }
+
 
 .contentbox {
     margin: 0 0 0 10em;
-    background-color: white;
+    background-color: var(--base-color-fg);
     border: 1px solid #666;
-    min-height: 400px;
+    min-height: 500px;
 }
 
 .contentbox #page {

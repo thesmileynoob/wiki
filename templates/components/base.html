@@ -17,16 +17,13 @@
 </head>
 
 <body>
-    {% include 'sidebar.html' %}
-
-    <div class="topbar">
-        <label for="search">Search</label>
-        <input type="text" name="search" id="search" placeholder="Search">
-    </div>
+    {% include 'components/sidebar.html' %}
+    {% include 'components/topbar.html' %}
 
     <div class="contentbox">
         {% block content %} OVERRIDE THIS! {% endblock content %}
     </div>
 
 </body>
+
 </html>
