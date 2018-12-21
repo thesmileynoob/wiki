@@ -1,14 +1,23 @@
 {% extends 'components/base.html' %}
 
-{% block title %} {{title}}  {% endblock title %}
+{% block title %} 
+    {{title}}  
+{% endblock title %}
+
+{% block actions %} 
+<!-- Figure out how to perform these actions -->
+    <a href="">Info</a>
+    <a href="">Edit</a>
+    <a href="">Delete</a>
+{% endblock actions %}
+
 
 {% block content %}
 
-<div id="page">
-    <div id="title">{{ title }}</div>
-    <hr>
-    <div id="content">{{ content }}</div>
-</div>
-
+    <div id="page">
+        <div id="title">{{ title }}</div>
+        <hr>
+        <div id="content">{{ content }}</div>
+    </div>
 
 {% endblock content %}

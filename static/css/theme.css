@@ -9,6 +9,8 @@
     /* Background color of the .contentbox */
     --base-color-fg: rgb(60, 60, 60);
 
+    --topbar-height: 50px;
+    --sidebar-width: 10em;
 }
 
 body {
@@ -21,16 +23,52 @@ body a {
     color: var(--link-color);
 }
 
-.topbar {
-    height: 50px;
-    margin: 0 0 0 10em;
+#topbar {
+    position: relative;
+    height: var(--topbar-height);
+    margin: 0 0 0 var(--sidebar-width);
+    /* background-color: white; */
 }
+
+#topbar #action_box {
+    display: inline-block;
+    position: absolute;
+    bottom: 0;
+}
+
+#topbar #action_box a {
+    display: inline-block;
+    /* color: var(--link-color); */
+    color: #eee;
+    padding: 5px 10px;
+    border: 1px solid #666;
+    font-size: 0.9em;
+}
+
+/* Search form */
+#topbar #search_box {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    width: 20em;
+}
+
+#topbar #search_box input {
+    background: var(--base-color-fg);
+    padding: 5px;
+    color: white;
+}
+
+#topbar #search_box::placeholder {
+    color: white;
+}
+
 
 .sidebar {
     position: absolute;
     top: 0;
     left: 0;
-    width: 10em;
+    width: var(--sidebar-width);
 }
 
 .sidebar #logobox {
@@ -54,17 +92,24 @@ body a {
     text-decoration: none;
 }
 
+.sidebar nav {
+    margin: 10px;
+    border: 1px solid #666;
+}
+
 /* sidebar links */
-.sidebar nav *{
+.sidebar nav * {
     display: block;
     color: var(--link-color);
-    padding: 5px;
-    font-size: 1.2em;
+    font-size: 0.95em;
+    text-decoration: none;
+    padding: 2px;
+    margin-bottom: 5px;
 }
 
 
 .contentbox {
-    margin: 0 0 0 10em;
+    margin: 0 0 0 var(--sidebar-width);
     background-color: var(--base-color-fg);
     border: 1px solid #666;
     min-height: 500px;

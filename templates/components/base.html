@@ -18,7 +18,23 @@
 
 <body>
     {% include 'components/sidebar.html' %}
-    {% include 'components/topbar.html' %}
+
+    <!-- TODO: the 'actions' block doesn't work if included. -->
+    <!-- Find a workaround, and move #topbar back to components/sidebar.html and include it. -->
+   
+    <div id="topbar">
+
+        <div id="action_box">
+            {% block actions %}{% endblock actions %}
+        </div>
+
+        <div id="search_box">
+            <form action="/search" method="GET">
+                <input type="text" name="search" id="search_box" placeholder="Search Wiki">
+            </form>
+        </div>
+
+    </div>
 
     <div class="contentbox">
         {% block content %} OVERRIDE THIS! {% endblock content %}

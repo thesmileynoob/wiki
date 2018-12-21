@@ -6,13 +6,15 @@
 
 
 <div style="padding: 10px">
-    Welcome to wiki, this is your custom home page!
+
     <h1>Total {{num_pages}} pages!</h1>
+
     <ol>
         {% for page in pages %}
-            <li><a href="/wiki/{{ page.title }}">{{ page.pretty_title(page.title) }}</a></li>
+            <li style="padding: 5px;"><a href="/wiki/{{ page.title }}">{{ page.pretty_title(page.title) }}</a></li>
         {% endfor %}
     </ol>
+
 </div>
 
 

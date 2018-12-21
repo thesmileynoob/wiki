@@ -5,6 +5,8 @@ import time
 import wasabi
 import flask
 
+from sqlalchemy.orm.exc import NoResultFound
+
 from wiki import config
 from wiki.page import Page, Revision, new_session
 
@@ -30,9 +32,12 @@ def page_view(title):
     session = new_session()
 
     title = Page.format_title(title)
-    page = session.query(Page).filter_by(title=title).one()
-    if not page:
+    try:
+        page = session.query(Page).filter_by(title=title).one()
+    except NoResultFound:
         return 'No match found'
+        #TODO Handle this!
+
     rev = page.revisions[0]
 
     session.close()
