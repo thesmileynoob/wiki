@@ -6,9 +6,10 @@
 
 {% block actions %} 
 <!-- Figure out how to perform these actions -->
-    <a href="">Info</a>
-    <a href="">Edit</a>
-    <a href="">Delete</a>
+    <a href="/info/{{ page_id }}">Info</a>
+    <a href="/edit/{{ page_id }}">Edit</a>
+<!-- TODO: Modal to confirm deletion -->
+    <a href="/delete/{{ page_id }}">Delete</a>
 {% endblock actions %}
 
 

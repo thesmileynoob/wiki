@@ -18,13 +18,22 @@ flask_app.config['DEBUG'] = True
 @flask_app.route('/')
 def homepage_view():
     session = new_session()
+
     pages = session.query(Page).all()
     num_pages = len(pages)
+    num_revs = session.query(Revision).count()
+    check = 0
+    for page in pages:
+        page.revcount = len(page.revisions)
+        check += page.revcount
+
+    abandoned = num_revs - check
     session.close()
 
     log.info(f"{num_pages} pages")
     return flask.render_template('home.html', num_pages=num_pages,
-                                 pages=pages)
+                                 pages=pages, num_revs=num_revs,
+                                 abandoned = abandoned)
 
 
 @flask_app.route('/wiki/<title>')
@@ -36,14 +45,35 @@ def page_view(title):
         page = session.query(Page).filter_by(title=title).one()
     except NoResultFound:
         return 'No match found'
-        #TODO Handle this!
+        # TODO Handle this!
 
     rev = page.revisions[0]
 
     session.close()
 
-    return flask.render_template('page.html', title=Page.pretty_title(page.title),
-                                 content=rev.content)
+    return flask.render_template(
+        'page.html',
+        page_id=page.id,
+        title=Page.pretty_title(page.title),
+        content=rev.content)
+
+
+@flask_app.route('/delete/<int:id>')
+def page_delete(id):
+    session = new_session()
+    try:
+        page = session.query(Page).filter_by(id=id).one()
+        del page.revisions
+        del page
+        msg = f'Page(id: {id}) deleted successfully'
+    except NoResultFound:
+        msg = f'Delete Failed- Page(id: {id}) doesnt exist!'
+    finally:
+        session.commit()
+        session.close()
+
+    return flask.render_template('redirect.html',
+                                 title=f'Delete Page {id}', message=msg)
 
 
 @flask_app.route('/todo')
