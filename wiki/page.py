@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
@@ -21,9 +23,8 @@ Revision:
     notes: str
 """
 
+# ORM Base class for mapped classes
 Base = declarative_base()
-engine = create_engine(f"sqlite:///{config.DBNAME}")
-# engine = create_engine(f"sqlite:///:memory:", echo=True)
 
 
 class Page(Base):
@@ -78,11 +79,18 @@ class Revision(Base):
         return f"<Rev(id: {self.id}, pid: {self.page_id}, content: '{self.content[:50]}')>"
 
 
+# engine = create_engine(f"sqlite:///:memory:", echo=True)
+engine = create_engine(f"sqlite:///{config.DBNAME}")
+
 # Create the tables if they do not exist already
 Base.metadata.create_all(engine)
 
 
+@contextmanager
 def new_session():
-    """ Helper function to generate a session object """
+    """ Context manager for sessions. This is implemented only
+    to simplify db access using the `with` statement """
     Session = sessionmaker(bind=engine)
-    return Session()
+    instance = Session()
+    yield instance
+    instance.close()

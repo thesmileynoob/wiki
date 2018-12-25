@@ -7,8 +7,6 @@
 
 <div style="padding: 10px">
 
-    <h1>Total {{num_pages}} pages!</h1>
-
     <table>
         <thead>
             <tr>
@@ -21,7 +19,7 @@
         </thead>
         <tbody>
 
-            {% for page in pages %}
+            {% for page in v_pages %}
             <tr>
                 <td>{{ page.id }}</td>
                 <td>
@@ -41,9 +39,9 @@
 
 <div>
     <h1>info</h1>
-    <h4>Num pages: {{ num_pages }}</h4>
-    <h4>Num revs: {{ num_revs }}</h4>
-    <h4>Abandoned revs: {{ abandoned }}</h4>
+    <h4>Num pages: {{ v_num_pages }}</h4>
+    <h4>Num revs: {{ v_num_revs }}</h4>
+    <h4>Abandoned revs: {{ v_num_abandoned }}</h4>
 </div>
 
 

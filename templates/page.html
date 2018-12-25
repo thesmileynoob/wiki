@@ -6,19 +6,19 @@
 
 {% block actions %} 
 <!-- Figure out how to perform these actions -->
-    <a href="/info/{{ page_id }}">Info</a>
-    <a href="/edit/{{ page_id }}">Edit</a>
+    <a href="/info/{{ v_page_id }}">Info</a>
+    <a href="/edit/{{ v_page_id }}">Edit</a>
 <!-- TODO: Modal to confirm deletion -->
-    <a href="/delete/{{ page_id }}">Delete</a>
+    <a href="/delete/{{ v_page_id }}">Delete</a>
 {% endblock actions %}
 
 
 {% block content %}
 
     <div id="page">
-        <div id="title">{{ title }}</div>
+        <div id="title">{{ v_pretty_title }}</div>
         <hr>
-        <div id="content">{{ content }}</div>
+        <div id="content">{{ v_content }}</div>
     </div>
 
 {% endblock content %}
