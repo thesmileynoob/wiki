@@ -60,14 +60,12 @@ def page_view(title):
     return flask.render_template('page.html', **ctx)
 
 
-# TODO bug: page.revisions don't get deleted
 @flask_app.route('/delete/<int:id>')
 def page_delete(id):
     with new_session() as session:
         try:
             page = session.query(Page).filter_by(id=id).one()
-            del page.revisions
-            del page
+            session.delete(page)  # delete page and its revs
             msg = f'Page(id: {id}) deleted successfully'
         except NoResultFound:
             msg = f'Delete Failed- Page(id: {id}) doesnt exist!'

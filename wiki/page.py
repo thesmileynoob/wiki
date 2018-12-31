@@ -34,8 +34,9 @@ class Page(Base):
     title: str = Column(String, unique=True)
     note: str = Column(String)
 
-    # List of revisions of this page
-    revisions = relationship('Revision', back_populates='page')
+    # NOTE: cascade is required for deletion to work!
+    revisions = relationship(
+        'Revision', back_populates='page', cascade='all, delete, delete-orphan')
 
     def __repr__(self):
         return f"<Page(id: {self.id}, title: '{self.title}')>"
