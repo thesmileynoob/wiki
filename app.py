@@ -49,7 +49,7 @@ def page_view(title):
             return 'No match found'
             # TODO Handle this!
 
-        rev = page.revisions[0]  # latest revision
+        rev = page.revisions[-1]  # latest revision
 
         ctx = {
             'v_page_id': page.id,
@@ -129,6 +129,53 @@ def add_page_view():
                 raise Exception('Page already exists!')
             page.revisions.append(rev)
             session.add(page)
+            session.commit()
+
+        return flask.redirect(
+            flask.url_for('page_view', title=Page.format_title(page_title)))
+
+
+@flask_app.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit_page_view(id):
+    if flask.request.method == 'GET':
+        with new_session() as session:
+            try:
+                page: Page = session.query(Page).filter_by(id=id).one()
+                latestrev: Revision = page.revisions[-1]
+                ctx = {
+                    'v_title': f'Edit Page {id}',
+                    'v_page_id': page.id,
+                    'v_page_title': Page.pretty_title(page.title),
+                    'v_page_note': page.note or "",
+                    'v_rev_content': latestrev.content
+                }
+                return flask.render_template('edit_page.html', **ctx)
+            except NoResultFound:
+                ctx = {
+                    'v_title': f'Edit Page {id}',
+                    'v_message': f'Page {id} does not exist'
+                }
+                return flask.render_template('redirect.html',  **ctx)
+
+    elif flask.request.method == 'POST':
+        r = flask.request
+        page_id = r.form.get('page_id', '')
+        page_title = r.form.get('page_title', '').strip()
+        page_note = r.form.get('page_note', '').strip()
+        rev_content = r.form.get('rev_content', '').strip()
+
+        with new_session() as session:
+            page = session.query(Page).filter_by(id=id).one()
+
+            page.title = Page.format_title(page_title)
+            page.note = page_note
+
+            rev = Revision()
+            rev.content = rev_content
+            rev.timestamp = int(time.time())
+
+            page.revisions.append(rev)
+
             session.commit()
 
         return flask.redirect(

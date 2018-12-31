@@ -1,0 +1,38 @@
+{% extends 'components/base.html' %}
+
+{% block title %} {{ v_title }} {% endblock title %}
+
+{% block content %}
+
+<form action="/edit/{{v_page_id}}" method="post" id="add_page_form">
+    <h3> Add a page</h3>
+    <fieldset>
+        <legend>Page information</legend>
+
+        <div>
+            <input type="hidden" name="page_id" value="{{v_page_id}}">
+        </div>
+
+        <div>
+            <label for="page_title">Title</label>
+            <input autofocus type="text" name="page_title" id="page_title" value="{{v_page_title}}">
+        </div>
+
+        <div>
+            <label for="page_note">Notes</label>
+            <input type="text" name="page_note" id="page_note" value="{{v_page_note}}">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Revision</legend>
+        <div>
+            <label for="rev_content">Content</label>
+            <textarea name="rev_content" id="rev_content">{{v_rev_content}}</textarea>
+        </div>
+    </fieldset>
+
+    <button type="submit">Update!</button>
+</form>
+
+{% endblock content %}
