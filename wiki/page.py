@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
@@ -32,7 +32,6 @@ class Page(Base):
 
     id: int = Column(Integer, primary_key=True)
     title: str = Column(String, unique=True)
-    flags: str = Column(String, comment='csv')
     note: str = Column(String)
 
     # List of revisions of this page
@@ -53,25 +52,14 @@ class Page(Base):
         thetitle = ' '.join(title.split('_'))  # the sunken ship
         return thetitle.title()  # The Sunken Ship
 
-    @staticmethod
-    def format_flags(flags: any) -> str:
-        """ flags must be string or [string] """
-        if type(flags) not in [str, list]:
-            raise TypeError("flags must be str or [str]")
-        if type(flags) is str:
-            flags = flags.split(',')
-        flags = [x.strip().lower() for x in flags]
-        return ', '.join(flags)
-
 
 class Revision(Base):
     __tablename__ = 'revisions'
 
     id: int = Column(Integer, primary_key=True)
     page_id: int = Column(Integer, ForeignKey('pages.id'))
-    content: str = Column(String)
+    content: str = Column(Text)
     timestamp: int = Column(Integer)  # Unix epoch
-    note: str = Column(String)
 
     page: Page = relationship('Page', back_populates='revisions')
 

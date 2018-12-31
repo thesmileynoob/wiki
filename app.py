@@ -49,7 +49,7 @@ def page_view(title):
             return 'No match found'
             # TODO Handle this!
 
-        rev = page.revisions[0]
+        rev = page.revisions[0]  # latest revision
 
         ctx = {
             'v_page_id': page.id,
@@ -60,6 +60,7 @@ def page_view(title):
     return flask.render_template('page.html', **ctx)
 
 
+# TODO bug: page.revisions don't get deleted
 @flask_app.route('/delete/<int:id>')
 def page_delete(id):
     with new_session() as session:
@@ -96,51 +97,44 @@ def settings():
 def add_page_view():
     """ Add a new page """
     r = flask.request
+
     if r.method == 'GET':
         # Display the add form
         ctx = {'v_title': 'New Page'}
         return flask.render_template('add_page.html', **ctx)
+
     elif r.method == 'POST':
         # Save the form and show a little modal maybe
         page_title = r.form.get('page_title', '').strip()
-        page_flags = r.form.get('page_flags', '').strip()
         page_note = r.form.get('page_note', '').strip()
-
         rev_content = r.form.get('rev_content', '').strip()
-        rev_note = r.form.get('rev_note', '').strip()
 
+        # TODO frontend validation
         if not page_title:
             raise Exception('TitleError: empty title')
         if not rev_content:
             raise Exception('RevisionError: empty revision')
 
-        # page
-        page = Page()
-        page.title = Page.format_title(page_title)
-        page.note = page_note
-        page.flags = Page.format_flags(page_flags)
+        with new_session() as session:
+            # page
+            page = Page()
+            page.title = Page.format_title(page_title)
+            page.note = page_note
 
-        # Revision
-        rev = Revision()
-        rev.content = rev_content
-        rev.note = rev_note
-        rev.timestamp = int(time.time())
+            # Revision
+            rev = Revision()
+            rev.content = rev_content
+            rev.timestamp = int(time.time())
 
-        create_new_page(page, rev)
+            if page.revisions:
+                log.fail('create_new_page: Page already exists!: ', page)
+                raise Exception('Page already exists!')
+            page.revisions.append(rev)
+            session.add(page)
+            session.commit()
 
         return flask.redirect(
             flask.url_for('page_view', title=Page.format_title(page_title)))
-
-
-def create_new_page(page: Page, revision: Revision):
-    """ save's a new page to db """
-    with new_session() as session:
-        if page.revisions:
-            log.fail('create_new_page: Page already exists!: ', page)
-            raise Exception('Page already exists!')
-        page.revisions.append(revision)
-        session.add(page)
-        session.commit()
 
 
 @flask_app.route('/generate')
