@@ -1,30 +1,5 @@
-from contextlib import contextmanager
-
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Text
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
-
+from .dbcommons import *
 from . import config
-
-"""
-https://en.wikipedia.org/wiki/Wikipedia:Manual_of_Style/Layout
-Represents a wiki page:
-
-Page:
-    id: int
-    title: str
-    flags: str
-    notes: str
-    body: Body
-
-Revision:
-    id: int
-    Content: str (main text, appendices)
-    notes: str
-"""
-
-# ORM Base class for mapped classes
-Base = declarative_base()
 
 
 class Page(Base):
@@ -68,18 +43,3 @@ class Revision(Base):
         return f"<Rev(id: {self.id}, pid: {self.page_id}, content: '{self.content[:50]}')>"
 
 
-# engine = create_engine(f"sqlite:///:memory:", echo=True)
-engine = create_engine(f"sqlite:///{config.DBNAME}")
-
-# Create the tables if they do not exist already
-Base.metadata.create_all(engine)
-
-
-@contextmanager
-def new_session():
-    """ Context manager for sessions. This is implemented only
-    to simplify db access using the `with` statement """
-    Session = sessionmaker(bind=engine)
-    instance = Session()
-    yield instance
-    instance.close()
