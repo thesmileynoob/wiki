@@ -1,17 +1,16 @@
 from .dbcommons import *
-from . import config
 
 
 class Page(Base):
     __tablename__ = 'pages'
 
     id: int = Column(Integer, primary_key=True)
-    title: str = Column(String, unique=True)
-    note: str = Column(String)
+    title: str = Column(Text, unique=True, nullable=False)
+    note: str = Column(Text)
 
     # NOTE: cascade is required for deletion to work!
     revisions = relationship(
-        'Revision', back_populates='page', cascade='all, delete, delete-orphan')
+            'Revision', back_populates='page', cascade='all, delete, delete-orphan')
 
     def __repr__(self):
         return f"<Page(id: {self.id}, title: '{self.title}')>"
@@ -34,8 +33,8 @@ class Revision(Base):
 
     id: int = Column(Integer, primary_key=True)
     page_id: int = Column(Integer, ForeignKey('pages.id'))
-    content: str = Column(Text)
-    timestamp: int = Column(Integer)  # Unix epoch
+    content: str = Column(Text, nullable=False)
+    timestamp: int = Column(Integer, nullable=False)  # Unix epoch
 
     page: Page = relationship('Page', back_populates='revisions')
 
