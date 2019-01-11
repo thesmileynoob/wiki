@@ -8,7 +8,7 @@ import flask
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from wiki.models import Page, Revision, TodoItem, TodoList
+from wiki.models import Page, Revision
 from wiki.page import *
 
 log = wasabi.Printer()
@@ -17,78 +17,22 @@ flask_app.config['DEBUG'] = True
 
 
 @flask_app.route('/')
-def homepage_view():
+def view_homepage():
     ctx = get_all_pages()
     # TODO Generate context here itself
     return flask.render_template('home.html', **ctx)
 
 
 @flask_app.route('/wiki/<title>')
-def page_view(title):
+def view_page(title):
     ctx = get_page_by_title(title)
     return flask.render_template('page.html', **ctx)
 
 
 @flask_app.route('/delete/<int:id>')
-def page_delete(id):
+def api_page_delete(id):
     ctx = del_page_by_id(id)
     return flask.render_template('redirect.html',  **ctx)
-
-
-def todo_get():
-    # return json string response for todos
-    with new_session() as sess:
-        # return string json representation
-        todo_items = sess.query(TodoItem).all()
-        todo_lists = sess.query(TodoList).all()
-
-        result = {
-            'lists': [],
-            'items': []
-        }
-
-        for item in todo_items:
-            result['items'].append({
-                'id': item.id,
-                'list_id': item.list_id,
-                'content': item.content,
-                'timestamp': item.timestamp
-            })
-        for item in todo_lists:
-            result['lists'].append({
-                'id': item.id,
-                'title': item.title,
-                'timestamp': item.timestamp,
-            })
-    return json.dumps(result)
-
-
-@flask_app.route('/todo', methods=['GET', 'POST'])
-def todo_view():
-    with new_session() as sess:
-        todo_lists = sess.query(TodoList).all()
-        todo_items = sess.query(TodoItem).all()
-
-    # ['list1']
-    ctx = {
-        'todo_lists': todo_lists,
-        'todo_items': todo_items
-    }
-
-    todo_items = []
-
-    req = flask.request
-    if req.method == 'POST':
-        # return status json response
-        item = req.form.get('title')
-        # create item
-        # if ok, update context
-    elif req.method == 'DELETE':
-        # TODO impl
-        pass
-    else:
-        raise NotImplementedError
-    return flask.render_template('todo.html', **ctx)
 
 
 @flask_app.route('/settings')
@@ -122,7 +66,7 @@ def add_page_view():
         create_new_page(page_title, page_note, rev_content)
 
         return flask.redirect(
-            flask.url_for('page_view', title=Page.format_title(page_title)))
+            flask.url_for('view_page', title=Page.format_title(page_title)))
 
 
 @flask_app.route('/edit/<int:id>', methods=['GET', 'POST'])
@@ -169,13 +113,13 @@ def edit_page_view(id):
             session.commit()
 
         return flask.redirect(
-            flask.url_for('page_view', title=Page.format_title(page_title)))
+            flask.url_for('view_page', title=Page.format_title(page_title)))
 
 
 @flask_app.route('/generate')
 def generate_pages():
     gen_dummy_pages()
-    return flask.redirect(flask.url_for('homepage_view'))
+    return flask.redirect(flask.url_for('view_homepage'))
 
 
 flask_app.run()

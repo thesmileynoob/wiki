@@ -53,7 +53,7 @@ class Revision(_Base):
     def __repr__(self):
         return f"<Rev(id: {self.id}, pid: {self.page_id}, content: '{self.content[:50]}')>"
 
-
+"""
 class TodoList(_Base):
     __tablename__ = 'todo_list'
 
@@ -81,6 +81,7 @@ class TodoItem(_Base):
     def __repr__(self):
         return f"<TodoItem(id: {self.id}, lid: {self.list_id}, content: '{self.content[:50]}')>"
 
+"""
 
 # Flag for creating tables
 _invoked_once = False
