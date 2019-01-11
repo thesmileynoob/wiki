@@ -31,7 +31,22 @@ def get_all_pages():
 
 
 def get_page_by_id(id: int):
-    pass
+    with new_session() as session:
+        try:
+            page = session.query(Page).filter_by(id=id).one()
+        except NoResultFound:
+            return 'No match found'
+        # TODO Handle this!
+
+        rev = page.revisions[-1]  # latest revision
+
+        ctx = {
+            'v_page_id': page.id,
+            'v_pretty_title': Page.pretty_title(page.title),
+            'v_content': rev.content
+        }
+
+        return ctx
 
 
 def get_page_by_title(title: str):
@@ -73,7 +88,7 @@ def del_page_by_id(id: int):
         return ctx
 
 
-def create_new_page(title: str, note: str, rev_content) -> Page:
+def create_new_page(title: str, note: str, rev_content) -> int:
     with new_session() as session:
         # page
         page = Page()
@@ -93,7 +108,7 @@ def create_new_page(title: str, note: str, rev_content) -> Page:
         page.revisions.append(rev)
         session.add(page)
         session.commit()
-        return page
+        return page.id
 
 
 def gen_dummy_pages():

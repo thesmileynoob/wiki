@@ -29,8 +29,15 @@ def view_settings():
 
 
 @flask_app.route('/wiki/<title>')
-def view_page(title):
+def api_search_page(title):
     ctx = get_page_by_title(title)
+    # TODO pagenotfound!
+    return flask.render_template('page.html', **ctx)
+
+
+@flask_app.route('/wiki/<int:id>')
+def view_page(id):
+    ctx = get_page_by_id(id)
     return flask.render_template('page.html', **ctx)
 
 
@@ -39,27 +46,6 @@ def view_new_page():
     """ Add a new page """
     ctx = {'v_title': 'New Page'}
     return flask.render_template('newpage.html', **ctx)
-
-
-@flask_app.route('/api/new', methods=['POST'])
-def api_new_page():
-    # Save page and redirect
-    r = flask.request
-
-    page_title = r.form.get('page_title', '').strip()
-    page_note = r.form.get('page_note', '').strip()
-    rev_content = r.form.get('rev_content', '').strip()
-
-    # TODO frontend validation
-    if not page_title:
-        raise Exception('TitleError: empty title')
-    if not rev_content:
-        raise Exception('RevisionError: empty revision')
-
-    create_new_page(page_title, page_note, rev_content)
-
-    return flask.redirect(
-        flask.url_for('view_page', title=Page.format_title(page_title)))
 
 
 @flask_app.route('/edit/<int:id>')
@@ -84,6 +70,26 @@ def view_edit_page(id):
             return flask.render_template('redirect.html',  **ctx)
 
 
+@flask_app.route('/api/new', methods=['POST'])
+def api_new_page():
+    # Save page and redirect
+    r = flask.request
+
+    page_title = r.form.get('page_title', '').strip()
+    page_note = r.form.get('page_note', '').strip()
+    rev_content = r.form.get('rev_content', '').strip()
+
+    # TODO frontend validation
+    if not page_title:
+        raise Exception('TitleError: empty title')
+    if not rev_content:
+        raise Exception('RevisionError: empty revision')
+
+    id = create_new_page(page_title, page_note, rev_content)
+
+    return flask.redirect(flask.url_for('view_page', id=id))
+
+
 @flask_app.route('/api/edit/<int:id>', methods=['POST'])
 def api_edit_page(id):
     r = flask.request
@@ -106,8 +112,7 @@ def api_edit_page(id):
 
         session.commit()
 
-    return flask.redirect(
-        flask.url_for('view_page', title=Page.format_title(page_title)))
+    return flask.redirect(flask.url_for('view_page', id=id))
 
 
 @flask_app.route('/delete/<int:id>')
