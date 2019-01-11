@@ -62,51 +62,52 @@ def api_new_page():
         flask.url_for('view_page', title=Page.format_title(page_title)))
 
 
-@flask_app.route('/edit/<int:id>', methods=['GET', 'POST'])
+@flask_app.route('/edit/<int:id>')
 def view_edit_page(id):
-    if flask.request.method == 'GET':
-        with new_session() as session:
-            try:
-                page: Page = session.query(Page).filter_by(id=id).one()
-                latestrev: Revision = page.revisions[-1]
-                ctx = {
-                    'v_title': f'Edit Page {id}',
-                    'v_page_id': page.id,
-                    'v_page_title': Page.pretty_title(page.title),
-                    'v_page_note': page.note or "",
-                    'v_rev_content': latestrev.content
-                }
-                return flask.render_template('editpage.html', **ctx)
-            except NoResultFound:
-                ctx = {
-                    'v_title': f'Edit Page {id}',
-                    'v_message': f'Page {id} does not exist'
-                }
-                return flask.render_template('redirect.html',  **ctx)
+    with new_session() as session:
+        try:
+            page: Page = session.query(Page).filter_by(id=id).one()
+            latestrev: Revision = page.revisions[-1]
+            ctx = {
+                'v_title': f'Edit Page {id}',
+                'v_page_id': page.id,
+                'v_page_title': Page.pretty_title(page.title),
+                'v_page_note': page.note or "",
+                'v_rev_content': latestrev.content
+            }
+            return flask.render_template('editpage.html', **ctx)
+        except NoResultFound:
+            ctx = {
+                'v_title': f'Edit Page {id}',
+                'v_message': f'Page {id} does not exist'
+            }
+            return flask.render_template('redirect.html',  **ctx)
 
-    elif flask.request.method == 'POST':
-        r = flask.request
-        page_id = r.form.get('page_id', '')
-        page_title = r.form.get('page_title', '').strip()
-        page_note = r.form.get('page_note', '').strip()
-        rev_content = r.form.get('rev_content', '').strip()
 
-        with new_session() as session:
-            page = session.query(Page).filter_by(id=id).one()
+@flask_app.route('/api/edit/<int:id>', methods=['POST'])
+def api_edit_page(id):
+    r = flask.request
+    page_id = r.form.get('page_id', '')
+    page_title = r.form.get('page_title', '').strip()
+    page_note = r.form.get('page_note', '').strip()
+    rev_content = r.form.get('rev_content', '').strip()
 
-            page.title = Page.format_title(page_title)
-            page.note = page_note
+    with new_session() as session:
+        page = session.query(Page).filter_by(id=id).one()
 
-            rev = Revision()
-            rev.content = rev_content
-            rev.timestamp = int(time.time())
+        page.title = Page.format_title(page_title)
+        page.note = page_note
 
-            page.revisions.append(rev)
+        rev = Revision()
+        rev.content = rev_content
+        rev.timestamp = int(time.time())
 
-            session.commit()
+        page.revisions.append(rev)
 
-        return flask.redirect(
-            flask.url_for('view_page', title=Page.format_title(page_title)))
+        session.commit()
+
+    return flask.redirect(
+        flask.url_for('view_page', title=Page.format_title(page_title)))
 
 
 @flask_app.route('/delete/<int:id>')
