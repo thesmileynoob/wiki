@@ -23,26 +23,20 @@ def view_homepage():
     return flask.render_template('home.html', **ctx)
 
 
+@flask_app.route('/settings')
+def view_settings():
+    return flask.render_template('settings.html')
+
+
 @flask_app.route('/wiki/<title>')
 def view_page(title):
     ctx = get_page_by_title(title)
     return flask.render_template('page.html', **ctx)
 
 
-@flask_app.route('/delete/<int:id>')
-def api_page_delete(id):
-    ctx = del_page_by_id(id)
-    return flask.render_template('redirect.html',  **ctx)
-
-
-@flask_app.route('/settings')
-def settings():
-    return flask.render_template('settings.html')
-
-
 # TODO rename to /new
 @flask_app.route('/add', methods=['GET', 'POST'])
-def add_page_view():
+def view_add_page():
     """ Add a new page """
     r = flask.request
 
@@ -70,7 +64,7 @@ def add_page_view():
 
 
 @flask_app.route('/edit/<int:id>', methods=['GET', 'POST'])
-def edit_page_view(id):
+def view_edit_page(id):
     if flask.request.method == 'GET':
         with new_session() as session:
             try:
@@ -116,8 +110,14 @@ def edit_page_view(id):
             flask.url_for('view_page', title=Page.format_title(page_title)))
 
 
+@flask_app.route('/delete/<int:id>')
+def api_page_delete(id):
+    ctx = del_page_by_id(id)
+    return flask.render_template('redirect.html',  **ctx)
+
+
 @flask_app.route('/generate')
-def generate_pages():
+def api_generate_pages():
     gen_dummy_pages()
     return flask.redirect(flask.url_for('view_homepage'))
 
