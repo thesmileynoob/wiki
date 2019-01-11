@@ -8,26 +8,10 @@ from .models import Page, Revision, new_session
 _log = wasabi.Printer()
 
 
-def get_all_pages():
+def get_all_pages() -> [Page]:
     with new_session() as session:
-
         pages = session.query(Page).all()
-        num_revs = session.query(Revision).count()
-
-        check = 0
-        for page in pages:
-            page.revcount = len(page.revisions)
-            check += page.revcount
-        abandoned = num_revs - check
-
-        ctx = {
-            'v_pages': pages,
-            'v_num_pages': len(pages),
-            'v_num_revs': num_revs,
-            'v_num_abandoned': abandoned,
-        }
-
-        return ctx
+        return pages
 
 
 def get_page_by_id(id: int):

@@ -13,13 +13,29 @@ from wiki.page import *
 
 log = wasabi.Printer()
 flask_app = flask.Flask('Wiki')
-flask_app.config['DEBUG'] = True
+flask_app.debug = True
+flask_app.env = 'development'
 
 
 @flask_app.route('/')
 def view_homepage():
-    ctx = get_all_pages()
-    # TODO Generate context here itself
+    pages = get_all_pages()
+
+    check = 0
+    num_revs = 0
+    for page in pages:
+        page.revcount = page.get_rev_count()
+        check += page.revcount
+        num_revs += page.revcount
+    abandoned = num_revs - check
+
+    ctx = {
+        'v_pages': pages,
+        'v_num_pages': len(pages),
+        'v_num_revs': num_revs,
+        'v_num_abandoned': abandoned,
+    }
+
     return flask.render_template('home.html', **ctx)
 
 
