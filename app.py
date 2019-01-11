@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import os
 import time
+import json
 
 import wasabi
 import flask
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from wiki import config
-from wiki.page import Page, Revision, new_session
+from wiki.models import Page, Revision, TodoItem, TodoList
+from wiki.page import *
 
 log = wasabi.Printer()
 flask_app = flask.Flask('Wiki')
@@ -17,72 +18,77 @@ flask_app.config['DEBUG'] = True
 
 @flask_app.route('/')
 def homepage_view():
-    with new_session() as session:
-
-        pages = session.query(Page).all()
-        num_revs = session.query(Revision).count()
-
-        check = 0
-        for page in pages:
-            page.revcount = len(page.revisions)
-            check += page.revcount
-        abandoned = num_revs - check
-
-        ctx = {
-            'v_pages': pages,
-            'v_num_pages': len(pages),
-            'v_num_revs': num_revs,
-            'v_num_abandoned': abandoned,
-        }
-
+    ctx = get_all_pages()
+    # TODO Generate context here itself
     return flask.render_template('home.html', **ctx)
 
 
 @flask_app.route('/wiki/<title>')
 def page_view(title):
-    with new_session() as session:
-
-        title = Page.format_title(title)
-        try:
-            page = session.query(Page).filter_by(title=title).one()
-        except NoResultFound:
-            return 'No match found'
-            # TODO Handle this!
-
-        rev = page.revisions[-1]  # latest revision
-
-        ctx = {
-            'v_page_id': page.id,
-            'v_pretty_title': Page.pretty_title(page.title),
-            'v_content': rev.content
-        }
-
+    ctx = get_page_by_title(title)
     return flask.render_template('page.html', **ctx)
 
 
 @flask_app.route('/delete/<int:id>')
 def page_delete(id):
-    with new_session() as session:
-        try:
-            page = session.query(Page).filter_by(id=id).one()
-            session.delete(page)  # delete page and its revs
-            msg = f'Page(id: {id}) deleted successfully'
-        except NoResultFound:
-            msg = f'Delete Failed- Page(id: {id}) doesnt exist!'
-        finally:
-            session.commit()
-
-        ctx = {
-            'v_title': f'Delete Page {id}',
-            'v_message': msg
-        }
-
+    ctx = del_page_by_id(id)
     return flask.render_template('redirect.html',  **ctx)
 
 
-@flask_app.route('/todo')
+def todo_get():
+    # return json string response for todos
+    with new_session() as sess:
+        # return string json representation
+        todo_items = sess.query(TodoItem).all()
+        todo_lists = sess.query(TodoList).all()
+
+        result = {
+            'lists': [],
+            'items': []
+        }
+
+        for item in todo_items:
+            result['items'].append({
+                'id': item.id,
+                'list_id': item.list_id,
+                'content': item.content,
+                'timestamp': item.timestamp
+            })
+        for item in todo_lists:
+            result['lists'].append({
+                'id': item.id,
+                'title': item.title,
+                'timestamp': item.timestamp,
+            })
+    return json.dumps(result)
+
+
+@flask_app.route('/todo', methods=['GET', 'POST'])
 def todo_view():
-    return flask.render_template('todo.html')
+    with new_session() as sess:
+        todo_lists = sess.query(TodoList).all()
+        todo_items = sess.query(TodoItem).all()
+
+    # ['list1']
+    ctx = {
+        'todo_lists': todo_lists,
+        'todo_items': todo_items
+    }
+
+    todo_items = []
+
+    req = flask.request
+    if req.method == 'POST':
+        # return status json response
+        item = req.form.get('title')
+        # create item
+        # if ok, update context
+    elif req.method == 'DELETE':
+        # TODO impl
+        pass
+    else:
+        raise NotImplementedError
+    return flask.render_template('todo.html', **ctx)
 
 
 @flask_app.route('/settings')
@@ -113,23 +119,7 @@ def add_page_view():
         if not rev_content:
             raise Exception('RevisionError: empty revision')
 
-        with new_session() as session:
-            # page
-            page = Page()
-            page.title = Page.format_title(page_title)
-            page.note = page_note
-
-            # Revision
-            rev = Revision()
-            rev.content = rev_content
-            rev.timestamp = int(time.time())
-
-            if page.revisions:
-                log.fail('create_new_page: Page already exists!: ', page)
-                raise Exception('Page already exists!')
-            page.revisions.append(rev)
-            session.add(page)
-            session.commit()
+        create_new_page(page_title, page_note, rev_content)
 
         return flask.redirect(
             flask.url_for('page_view', title=Page.format_title(page_title)))
@@ -184,28 +174,7 @@ def edit_page_view(id):
 
 @flask_app.route('/generate')
 def generate_pages():
-    """ Generate dummy pages for testing """
-
-    with open('static/dummy_data.txt', 'r') as f:
-        data = f.read()
-
-    pages = data.split('======')
-    assert len(pages) == 3
-
-    p1 = Page(title=Page.format_title('wiki'))
-    p1.revisions.append(Revision(content=pages[0]))
-
-    p2 = Page(title=Page.format_title('Website'))
-    p2.revisions.append(Revision(content=pages[1]))
-
-    p3 = Page(title=Page.format_title('stock market'))
-    p3.revisions.append(Revision(content=pages[2]))
-
-    with new_session() as session:
-        session.add_all([p1, p2, p3])
-        session.commit()
-
-    log.good('Pages generated successfully')
+    gen_dummy_pages()
     return flask.redirect(flask.url_for('homepage_view'))
 
 
