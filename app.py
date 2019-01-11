@@ -34,33 +34,32 @@ def view_page(title):
     return flask.render_template('page.html', **ctx)
 
 
-# TODO rename to /new
-@flask_app.route('/add', methods=['GET', 'POST'])
-def view_add_page():
+@flask_app.route('/new')
+def view_new_page():
     """ Add a new page """
+    ctx = {'v_title': 'New Page'}
+    return flask.render_template('newpage.html', **ctx)
+
+
+@flask_app.route('/api/new', methods=['POST'])
+def api_new_page():
+    # Save page and redirect
     r = flask.request
 
-    if r.method == 'GET':
-        # Display the add form
-        ctx = {'v_title': 'New Page'}
-        return flask.render_template('add_page.html', **ctx)
+    page_title = r.form.get('page_title', '').strip()
+    page_note = r.form.get('page_note', '').strip()
+    rev_content = r.form.get('rev_content', '').strip()
 
-    elif r.method == 'POST':
-        # Save the form and show a little modal maybe
-        page_title = r.form.get('page_title', '').strip()
-        page_note = r.form.get('page_note', '').strip()
-        rev_content = r.form.get('rev_content', '').strip()
+    # TODO frontend validation
+    if not page_title:
+        raise Exception('TitleError: empty title')
+    if not rev_content:
+        raise Exception('RevisionError: empty revision')
 
-        # TODO frontend validation
-        if not page_title:
-            raise Exception('TitleError: empty title')
-        if not rev_content:
-            raise Exception('RevisionError: empty revision')
+    create_new_page(page_title, page_note, rev_content)
 
-        create_new_page(page_title, page_note, rev_content)
-
-        return flask.redirect(
-            flask.url_for('view_page', title=Page.format_title(page_title)))
+    return flask.redirect(
+        flask.url_for('view_page', title=Page.format_title(page_title)))
 
 
 @flask_app.route('/edit/<int:id>', methods=['GET', 'POST'])
@@ -77,7 +76,7 @@ def view_edit_page(id):
                     'v_page_note': page.note or "",
                     'v_rev_content': latestrev.content
                 }
-                return flask.render_template('edit_page.html', **ctx)
+                return flask.render_template('editpage.html', **ctx)
             except NoResultFound:
                 ctx = {
                     'v_title': f'Edit Page {id}',
