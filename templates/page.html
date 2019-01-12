@@ -6,8 +6,8 @@
 
 {% block actions %} 
 <!-- Figure out how to perform these actions -->
-    <a href="/info/{{ v_page_id }}">Info</a>
     <a href="/edit/{{ v_page_id }}">Edit</a>
+    <a href="/history/{{ v_page_id }}">Info</a>
 <!-- TODO: Modal to confirm deletion -->
     <a href="/delete/{{ v_page_id }}">Delete</a>
 {% endblock actions %}
@@ -17,7 +17,7 @@
 
     <div id="page">
         <div id="title">{{  v_page_title  }}</div>
-        <p> {{ v_timestamp }} </p>
+        <small> {{ v_timestamp }} </small>
         <hr>
         <div id="content">{{ v_body }}</div>
     </div>

@@ -1,134 +1,29 @@
-/* variables */
 :root {
-    --logo-color: #5555FE;
-    --link-color: #ffcc00;
-    --text-color: #fff;
+    /** DARK THEME */
+    /*--theme-primary-color: rgb(40,40,40);*/
+    /*--theme-secondary-color: rgb(60,60,60);*/
 
-    /* Background color of the whole document */
-    --base-color-bg: rgb(40, 40, 40);
-    /* Background color of the .contentbox */
-    --base-color-fg: rgb(60, 60, 60);
+    /*--theme-logo-text-color: #fff;*/
+    /*--theme-text-color: #eee;*/
+
+    /*--theme-sidebar-link-color: #2563ff;*/
+    /*--theme-link-color: blue*/
+
+    /** LIGHT THEME */
+    --theme-primary-color: #f6f6f6;
+    --theme-secondary-color: #ffffff;
+
+    --theme-text-color: #222222;
+    --theme-logo-text-color: #333333;
+
+    --theme-link-color: #0645ad;
+    --theme-sidebar-link-color: var(--theme-link-color);
+
+    --theme-border-color: rgba(0,0,0,0.4);
 
     --topbar-height: 50px;
     --sidebar-width: 10em;
 }
 
-body {
-    background-color: var(--base-color-bg);
-    margin: 0;
-    color: var(--text-color) !important;
-}
-
-body a {
-    color: var(--link-color);
-}
-
-#topbar {
-    position: relative;
-    height: var(--topbar-height);
-    margin: 0 0 0 var(--sidebar-width);
-    /* background-color: white; */
-}
-
-#topbar #action_box {
-    display: inline-block;
-    position: absolute;
-    bottom: 0;
-}
-
-#topbar #action_box a {
-    display: inline-block;
-    /* color: var(--link-color); */
-    color: #eee;
-    padding: 5px 10px;
-    border: 1px solid #666;
-    font-size: 0.9em;
-}
-
-/* Search form */
-#topbar #search_box {
-    display: inline-block;
-    position: absolute;
-    right: 0;
-    width: 20em;
-}
-
-#topbar #search_box input {
-    background: var(--base-color-fg);
-    padding: 5px;
-    color: white;
-}
-
-#topbar #search_box::placeholder {
-    color: white;
-}
 
 
-.sidebar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: var(--sidebar-width);
-}
-
-.sidebar #logobox {
-    margin: 1em 1em;
-    text-align: center;
-}
-
-.sidebar #logobox #logo {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 80%;
-    background-position: center center;
-    background-repeat: no-repeat;
-}
-
-.sidebar #logobox #logo_title {
-    font-size: 55px;
-    font-family: logoFont;
-    color: var(--logo-color);
-    text-decoration: none;
-}
-
-.sidebar nav {
-    margin: 10px;
-    border: 1px solid #666;
-}
-
-/* sidebar links */
-.sidebar nav * {
-    display: block;
-    color: var(--link-color);
-    font-size: 0.95em;
-    text-decoration: none;
-    padding: 2px;
-    margin-bottom: 5px;
-}
-
-
-.contentbox {
-    margin: 0 0 0 var(--sidebar-width);
-    background-color: var(--base-color-fg);
-    border: 1px solid #666;
-    min-height: 500px;
-}
-
-.contentbox #page {
-    padding: 20px;
-}
-
-.contentbox #page hr {
-    border-top: 1px solid #eee;
-}
-
-.contentbox #page #title {
-    font-family: monospace;
-    font-size: 2em;
-}
-
-.contentbox #page #content {
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 1.2em;
-}
