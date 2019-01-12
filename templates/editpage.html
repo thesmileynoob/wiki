@@ -8,23 +8,18 @@
     <h2><u>{{ v_page_title }} </u></h2>
     <fieldset>
         <legend>Page information</legend>
+        <input type="hidden" name="page_id" value="{{v_page_id}}">
+        <input type="hidden" name="page_title" value="{{v_page_title}}">
 
         <div>
-            <input type="hidden" name="page_id" value="{{v_page_id}}">
-            <input type="hidden" name="page_title" value="{{v_page_title}}">
-        </div>
-
-        <div>
-            <label for="page_note">Notes</label>
-            <input type="text" name="page_note" id="page_note" value="{{v_page_note}}">
+            <input placeholder="Note" type="text" name="page_note" id="page_note" value="{{v_page_note}}">
         </div>
     </fieldset>
 
     <fieldset>
         <legend>Revision</legend>
         <div>
-            <label for="rev_body">Body</label>
-            <textarea name="rev_body" id="rev_body">{{v_rev_body}}</textarea>
+            <textarea placeholder="Body" name="rev_body" id="rev_body">{{v_rev_body}}</textarea>
         </div>
     </fieldset>
 
