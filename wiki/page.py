@@ -83,7 +83,10 @@ class Page:
         SQL = "SELECT * FROM revisions WHERE page_id=? ORDER BY timestamp DESC"
         with new_session() as cur:
             row = cur.execute(SQL, (self.id,)).fetchone()
-            return Revision.from_row(row)
+            if row:
+                return Revision.from_row(row)
+            else:
+                return None
 
     def get_rev_count(self):
         SQL = "SELECT COUNT(*) FROM revisions WHERE page_id=?"
@@ -95,15 +98,19 @@ class Page:
         SQL = "SELECT * FROM revisions WHERE page_id=?"
         with new_session() as cur:
             rows = cur.execute(SQL).fetchall()
-            revs = [Revision.from_row(row) for row in rows]
-            return revs
+            if rows:
+                revs = [Revision.from_row(row) for row in rows]
+                return revs
+            else:
+                return []
 
     @staticmethod
     def from_row(row):
+        assert row
         page = Page()
         page.id = row[0]
         page.title = row[1]
-        page.note = row[2]
+        page.note = row[2] or ''
         return page
 
 
@@ -127,19 +134,23 @@ def get_page(id: int = 0, title: str = '') -> Page:
         if id:
             SQL = "SELECT * FROM pages WHERE id=?"
             row = cur.execute(SQL, (id,)).fetchone()
-            return Page.from_row(row)
+            if row:
+                return Page.from_row(row)
         elif title:
             SQL = "SELECT * FROM pages WHERE title=?"
             row = cur.execute(SQL, (title,)).fetchone()
-            return Page.from_row(row)
-        else:
-            return None
+            if row:
+                return Page.from_row(row)
+        return None
 
 def get_all_pages() -> [Page]:
     with new_session() as cur:
         rows = cur.execute("SELECT * FROM PAGES")
-        pages = [Page.from_row(row) for row in rows]
-        return pages
+        if rows:
+            pages = [Page.from_row(row) for row in rows]
+            return pages
+        else:
+            return []
 
 
 def del_page_by_id(id: int):
