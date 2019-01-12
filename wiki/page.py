@@ -16,7 +16,7 @@ def new_session():
     conn.close()
 
 
-def setup_tables():
+def _setup():
     SQL = """
     CREATE TABLE IF NOT EXISTS pages (
         id INTEGER,
@@ -180,4 +180,4 @@ def gen_dummy_pages():
     print('Pages generated successfully')
 
 # Create all tables
-setup_tables()
+_setup()

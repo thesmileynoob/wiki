@@ -6,7 +6,8 @@ import json
 import wasabi
 import flask
 
-from wiki.page import *
+from wiki.page import * # TODO only import needed stuff
+from wiki.settings import get_setting, Setting
 
 log = wasabi.Printer()
 flask_app = flask.Flask('Wiki')
