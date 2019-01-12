@@ -1,120 +1,172 @@
+import json
 import time
-import wasabi
+import sqlite3
+from contextlib import contextmanager
 
-from sqlalchemy.orm.exc import NoResultFound
-from .models import Page, Revision, new_session
+# Internals
+DBNAME = 'data.db'
 
 
-_log = wasabi.Printer()
+@contextmanager
+def new_session():
+    conn = sqlite3.connect(DBNAME)
+    cur = conn.cursor()
+    yield cur
+    conn.commit()
+    conn.close()
 
+
+def setup_tables():
+    SQL = """
+    CREATE TABLE IF NOT EXISTS pages (
+        id INTEGER,
+        title TEXT NOT NULL,
+        note TEXT,
+        PRIMARY KEY (id)
+        UNIQUE (title)
+    );
+
+    CREATE TABLE IF NOT EXISTS revisions (
+        id INTEGER,
+        page_id INTEGER NOT NULL,
+        timestamp INTEGER NOT NULL,
+        body TEXT NOT NULL,
+        PRIMARY KEY (id),
+        FOREIGN KEY (page_id) REFERENCES pages (id)
+    );
+    """
+    with new_session() as cur:
+        cur.executescript(SQL)
+
+
+class Revision:
+    __tablename__ = 'revisions'
+
+    def __init__(self):
+        self.id: int = 0
+        self.page_id: int = 0
+        self.timestamp: int = 0
+        self.body: str = ''
+
+    @staticmethod
+    def from_row(row):
+        assert row
+        rev = Revision()
+        rev.id = row[0]
+        rev.page_id = row[1]
+        rev.timestamp = row[2]
+        rev.body = row[3]
+        return rev
+
+
+class Page:
+    __tablename__ = 'pages'
+
+    def __init__(self):
+        self.id: int = 0  # PK
+        self.title: str = ''  # Unique, notnull
+        self.note: str = ''
+
+    def __repr__(self):
+        return f"<Page(id: {self.id}, title: '{self.title}')>"
+
+    def add_revision(self, rev: Revision):
+        SQL = """
+        INSERT INTO revisions (page_id, timestamp, body)
+        VALUES (?, ?, ?)
+        """
+        with new_session() as cur:
+            cur.execute(SQL, (self.id, rev.timestamp, rev.body))
+            rev.id = cur.lastrowid
+
+    def get_last_rev(self):
+        SQL = "SELECT * FROM revisions WHERE page_id=? ORDER BY timestamp DESC"
+        with new_session() as cur:
+            row = cur.execute(SQL, (self.id,)).fetchone()
+            return Revision.from_row(row)
+
+    def get_rev_count(self):
+        SQL = "SELECT COUNT(*) FROM revisions WHERE page_id=?"
+        with new_session() as cur:
+            res = cur.execute(SQL, (self.id,)).fetchone()
+            return res[0]
+
+    def get_all_revs(self):
+        SQL = "SELECT * FROM revisions WHERE page_id=?"
+        with new_session() as cur:
+            rows = cur.execute(SQL).fetchall()
+            revs = [Revision.from_row(row) for row in rows]
+            return revs
+
+    @staticmethod
+    def from_row(row):
+        page = Page()
+        page.id = row[0]
+        page.title = row[1]
+        page.note = row[2]
+        return page
+
+
+def create_page(title: str, note: str) -> Page:
+    with new_session() as cur:
+        SQL = "INSERT INTO pages (title, note) VALUES (?, ?)"
+        cur.execute(SQL, (title, note))
+        id = cur.lastrowid
+
+        assert id, "Couldn't get lastrowid"
+
+        page = Page()
+        page.id = id
+        page.title = title
+        page.note = note
+        return page
+
+
+def get_page(id: int = 0, title: str = '') -> Page:
+    with new_session() as cur:
+        if id:
+            SQL = "SELECT * FROM pages WHERE id=?"
+            row = cur.execute(SQL, (id,)).fetchone()
+            return Page.from_row(row)
+        elif title:
+            SQL = "SELECT * FROM pages WHERE title=?"
+            row = cur.execute(SQL, (title,)).fetchone()
+            return Page.from_row(row)
+        else:
+            return None
 
 def get_all_pages() -> [Page]:
-    with new_session() as session:
-        pages = session.query(Page).all()
+    with new_session() as cur:
+        rows = cur.execute("SELECT * FROM PAGES")
+        pages = [Page.from_row(row) for row in rows]
         return pages
 
 
-def get_page_by_id(id: int):
-    with new_session() as session:
-        try:
-            page = session.query(Page).filter_by(id=id).one()
-        except NoResultFound:
-            return 'No match found'
-        # TODO Handle this!
-
-        rev = page.revisions[-1]  # latest revision
-
-        ctx = {
-            'v_page_id': page.id,
-            'v_pretty_title': Page.pretty_title(page.title),
-            'v_content': rev.content
-        }
-
-        return ctx
-
-
-def get_page_by_title(title: str):
-    with new_session() as session:
-        title = Page.format_title(title)
-        try:
-            page = session.query(Page).filter_by(title=title).one()
-        except NoResultFound:
-            return 'No match found'
-        # TODO Handle this!
-
-        rev = page.revisions[-1]  # latest revision
-
-        ctx = {
-            'v_page_id': page.id,
-            'v_pretty_title': Page.pretty_title(page.title),
-            'v_content': rev.content
-        }
-
-        return ctx
-
-
 def del_page_by_id(id: int):
-    with new_session() as session:
-        try:
-            page = session.query(Page).filter_by(id=id).one()
-            session.delete(page)  # delete page and its revs
-            msg = f'Page(id: {id}) deleted successfully'
-        except NoResultFound:
-            msg = f'Delete Failed- Page(id: {id}) doesnt exist!'
-        finally:
-            session.commit()
-
-        ctx = {
-            'v_title': f'Delete Page {id}',
-            'v_message': msg
-        }
-
-        return ctx
-
-
-def create_new_page(title: str, note: str, rev_content) -> int:
-    with new_session() as session:
-        # page
-        page = Page()
-        page.title = Page.format_title(title)
-        page.note = note
-
-        # Revision
-        rev = Revision()
-        rev.content = rev_content
-        rev.timestamp = int(time.time())
-
-        if page.revisions:
-            # WTF IS THIS ???
-            _log.fail('create_new_page: Page already exists!: ', page)
-            raise Exception('Page already exists!')
-
-        page.revisions.append(rev)
-        session.add(page)
-        session.commit()
-        return page.id
+    page = get_page(id=id)
+    assert page, "Page(id = %d) not found!" % id
+    with new_session() as cur:
+        cur.execute("DELETE FROM pages WHERE id=?", (id,))
+        cur.execute("DELETE FROM revisions WHERE page_id=?",
+                (id,))
 
 
 def gen_dummy_pages():
-    """ Generate dummy pages for testing """
-
     with open('static/dummy_data.txt', 'r') as f:
         data = f.read()
+    bodies = data.split('======')
+    assert len(bodies) == 3
 
-    pages = data.split('======')
-    assert len(pages) == 3
+    titles = ['wiki', 'Website', 'Stock Market']
 
-    p1 = Page(title=Page.format_title('wiki'))
-    p1.revisions.append(Revision(content=pages[0], timestamp=int(time.time())))
+    for i, title in enumerate(titles):
+        page = create_page(title, '')
+        rev = Revision()
+        rev.body = bodies[i]
+        rev.timestamp = int(time.time())
+        page.add_revision(rev)
 
-    p2 = Page(title=Page.format_title('Website'))
-    p2.revisions.append(Revision(content=pages[1], timestamp=int(time.time())))
+    print('Pages generated successfully')
 
-    p3 = Page(title=Page.format_title('stock market'))
-    p3.revisions.append(Revision(content=pages[2], timestamp=int(time.time())))
-
-    with new_session() as session:
-        session.add_all([p1, p2, p3])
-        session.commit()
-
-    _log.good('Pages generated successfully')
+# Create all tables
+setup_tables()

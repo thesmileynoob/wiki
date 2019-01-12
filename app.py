@@ -6,9 +6,6 @@ import json
 import wasabi
 import flask
 
-from sqlalchemy.orm.exc import NoResultFound
-
-from wiki.models import Page, Revision
 from wiki.page import *
 
 log = wasabi.Printer()
@@ -46,14 +43,28 @@ def view_settings():
 
 @flask_app.route('/wiki/<title>')
 def api_search_page(title):
-    ctx = get_page_by_title(title)
-    # TODO pagenotfound!
-    return flask.render_template('page.html', **ctx)
+    page = get_page(title=title)
+    if page:
+        return flask.redirect(flask.url_for('view_page'), id=page.id)
+    else:
+        ctx = {
+            'v_title': 'Page not found',
+            'v_message': f"Page '{title}' not found"
+        }
+        return flask.redirect('redirect.html', **ctx)
 
 
 @flask_app.route('/wiki/<int:id>')
 def view_page(id):
-    ctx = get_page_by_id(id)
+    page = get_page(id=id)
+    rev = page.get_last_rev()
+
+    ctx = {
+        'v_page_id': page.id,
+        'v_pretty_title': page.title,
+        'v_content': rev.body
+    }
+
     return flask.render_template('page.html', **ctx)
 
 
@@ -66,24 +77,23 @@ def view_new_page():
 
 @flask_app.route('/edit/<int:id>')
 def view_edit_page(id):
-    with new_session() as session:
-        try:
-            page: Page = session.query(Page).filter_by(id=id).one()
-            latestrev: Revision = page.revisions[-1]
-            ctx = {
-                'v_title': f'Edit Page {id}',
-                'v_page_id': page.id,
-                'v_page_title': Page.pretty_title(page.title),
-                'v_page_note': page.note or "",
-                'v_rev_content': latestrev.content
-            }
-            return flask.render_template('editpage.html', **ctx)
-        except NoResultFound:
-            ctx = {
-                'v_title': f'Edit Page {id}',
-                'v_message': f'Page {id} does not exist'
-            }
-            return flask.render_template('redirect.html',  **ctx)
+    page = get_page(id = id)
+    if not page:
+        ctx = {
+            'v_title': f'Edit Page {id}',
+            'v_message': f'Page {id} does not exist'
+        }
+        return flask.redirect('redirect.html', v_message='Invalid page')
+
+    rev = page.get_last_rev()
+    ctx = {
+        'v_title': f'Edit Page {id}',
+        'v_page_id': page.id,
+        'v_page_title': page.title,
+        'v_page_note': page.note,
+        'v_rev_content': rev.body
+    }
+    return flask.render_template('editpage.html', **ctx)
 
 
 @flask_app.route('/api/new', methods=['POST'])
@@ -101,9 +111,13 @@ def api_new_page():
     if not rev_content:
         raise Exception('RevisionError: empty revision')
 
-    id = create_new_page(page_title, page_note, rev_content)
+    page = create_page(page_title, page_note)
+    rev = Revision()
+    rev.body = rev_content
+    rev.timestamp = int(time.time())
+    page.add_revision(rev)
 
-    return flask.redirect(flask.url_for('view_page', id=id))
+    return flask.redirect(flask.url_for('view_page', id=page.id))
 
 
 @flask_app.route('/api/edit/<int:id>', methods=['POST'])
@@ -114,26 +128,24 @@ def api_edit_page(id):
     page_note = r.form.get('page_note', '').strip()
     rev_content = r.form.get('rev_content', '').strip()
 
-    with new_session() as session:
-        page = session.query(Page).filter_by(id=id).one()
+    # TODO Check for changes
 
-        page.title = Page.format_title(page_title)
-        page.note = page_note
-
-        rev = Revision()
-        rev.content = rev_content
-        rev.timestamp = int(time.time())
-
-        page.revisions.append(rev)
-
-        session.commit()
+    page = get_page(id = id)
+    rev = Revision()
+    rev.body = rev_content
+    rev.timestamp = int(time.time())
+    page.add_revision(rev)
 
     return flask.redirect(flask.url_for('view_page', id=id))
 
 
 @flask_app.route('/delete/<int:id>')
 def api_page_delete(id):
-    ctx = del_page_by_id(id)
+    del_page_by_id(id)
+    ctx = {
+        'v_title': f'Delete Page {id}',
+        'v_message': f'Successful'
+    }
     return flask.render_template('redirect.html',  **ctx)
 
 
