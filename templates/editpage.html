@@ -5,17 +5,13 @@
 {% block content %}
 
 <form action="/api/edit/{{v_page_id}}" method="post" id="add_page_form">
-    <h3> Add a page</h3>
+    <h2><u>{{ v_page_title }} </u></h2>
     <fieldset>
         <legend>Page information</legend>
 
         <div>
             <input type="hidden" name="page_id" value="{{v_page_id}}">
-        </div>
-
-        <div>
-            <label for="page_title">Title</label>
-            <input autofocus type="text" name="page_title" id="page_title" value="{{v_page_title}}">
+            <input type="hidden" name="page_title" value="{{v_page_title}}">
         </div>
 
         <div>
