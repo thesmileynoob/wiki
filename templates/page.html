@@ -1,7 +1,7 @@
 {% extends 'components/base.html' %}
 
 {% block title %} 
-    {{title}}  
+    {{ v_title }}  
 {% endblock title %}
 
 {% block actions %} 
@@ -16,9 +16,10 @@
 {% block content %}
 
     <div id="page">
-        <div id="title">{{ v_pretty_title }}</div>
+        <div id="title">{{  v_page_title  }}</div>
+        <p> {{ v_timestamp }} </p>
         <hr>
-        <div id="content">{{ v_content }}</div>
+        <div id="content">{{ v_body }}</div>
     </div>
 
 {% endblock content %}

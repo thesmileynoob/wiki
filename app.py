@@ -41,28 +41,17 @@ def view_settings():
     return flask.render_template('settings.html')
 
 
-@flask_app.route('/wiki/<title>')
-def api_search_page(title):
-    page = get_page(title=title)
-    if page:
-        return flask.redirect(flask.url_for('view_page'), id=page.id)
-    else:
-        ctx = {
-            'v_title': 'Page not found',
-            'v_message': f"Page '{title}' not found"
-        }
-        return flask.redirect('redirect.html', **ctx)
-
-
 @flask_app.route('/wiki/<int:id>')
 def view_page(id):
     page = get_page(id=id)
     rev = page.get_last_rev()
 
     ctx = {
+        'v_title': page.title, # Tab title
         'v_page_id': page.id,
-        'v_pretty_title': page.title,
-        'v_content': rev.body
+        'v_page_title': page.title,
+        'v_timestamp': time.ctime(rev.timestamp),
+        'v_body': rev.body
     }
 
     return flask.render_template('page.html', **ctx)
@@ -91,9 +80,23 @@ def view_edit_page(id):
         'v_page_id': page.id,
         'v_page_title': page.title,
         'v_page_note': page.note,
-        'v_rev_content': rev.body
+        'v_rev_body': rev.body
     }
     return flask.render_template('editpage.html', **ctx)
+
+
+@flask_app.route('/wiki/<title>')
+def api_search_page(title):
+    page = get_page(title=title)
+    if page:
+        return flask.redirect(flask.url_for('view_page'), id=page.id)
+    else:
+        ctx = {
+            'v_title': 'Page not found',
+            'v_message': f"Page '{title}' not found"
+        }
+        return flask.redirect('redirect.html', **ctx)
+
 
 
 @flask_app.route('/api/new', methods=['POST'])
@@ -103,17 +106,17 @@ def api_new_page():
 
     page_title = r.form.get('page_title', '').strip()
     page_note = r.form.get('page_note', '').strip()
-    rev_content = r.form.get('rev_content', '').strip()
+    rev_body = r.form.get('rev_body', '').strip()
 
     # TODO frontend validation
     if not page_title:
         raise Exception('TitleError: empty title')
-    if not rev_content:
+    if not rev_body:
         raise Exception('RevisionError: empty revision')
 
     page = create_page(page_title, page_note)
     rev = Revision()
-    rev.body = rev_content
+    rev.body = rev_body
     rev.timestamp = int(time.time())
     page.add_revision(rev)
 
@@ -126,13 +129,13 @@ def api_edit_page(id):
     page_id = r.form.get('page_id', '')
     page_title = r.form.get('page_title', '').strip()
     page_note = r.form.get('page_note', '').strip()
-    rev_content = r.form.get('rev_content', '').strip()
+    rev_body = r.form.get('rev_body', '').strip()
 
     # TODO Check for changes
 
     page = get_page(id = id)
     rev = Revision()
-    rev.body = rev_content
+    rev.body = rev_body
     rev.timestamp = int(time.time())
     page.add_revision(rev)
 
