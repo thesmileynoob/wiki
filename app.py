@@ -6,7 +6,7 @@ import json
 import wasabi
 import flask
 
-from wiki.page import * # TODO only import needed stuff
+from wiki.page import *  # TODO only import needed stuff
 from wiki.settings import get_setting, Setting
 
 log = wasabi.Printer()
@@ -48,7 +48,7 @@ def view_page(id):
     rev = page.get_last_rev()
 
     ctx = {
-        'v_title': page.title, # Tab title
+        'v_title': page.title,  # Tab title
         'v_page_id': page.id,
         'v_page_title': page.title,
         'v_timestamp': time.ctime(rev.timestamp),
@@ -67,7 +67,7 @@ def view_new_page():
 
 @flask_app.route('/edit/<int:id>')
 def view_edit_page(id):
-    page = get_page(id = id)
+    page = get_page(id=id)
     if not page:
         ctx = {
             'v_title': f'Edit Page {id}',
@@ -97,7 +97,6 @@ def api_search_page(title):
             'v_message': f"Page '{title}' not found"
         }
         return flask.redirect('redirect.html', **ctx)
-
 
 
 @flask_app.route('/api/new', methods=['POST'])
@@ -134,7 +133,7 @@ def api_edit_page(id):
 
     # TODO Check for changes
 
-    page = get_page(id = id)
+    page = get_page(id=id)
     rev = Revision()
     rev.body = rev_body
     rev.timestamp = int(time.time())

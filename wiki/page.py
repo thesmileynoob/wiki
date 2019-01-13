@@ -143,6 +143,7 @@ def get_page(id: int = 0, title: str = '') -> Page:
                 return Page.from_row(row)
         return None
 
+
 def get_all_pages() -> [Page]:
     with new_session() as cur:
         rows = cur.execute("SELECT * FROM PAGES")
@@ -159,7 +160,7 @@ def del_page_by_id(id: int):
     with new_session() as cur:
         cur.execute("DELETE FROM pages WHERE id=?", (id,))
         cur.execute("DELETE FROM revisions WHERE page_id=?",
-                (id,))
+                    (id,))
 
 
 def gen_dummy_pages():
@@ -178,6 +179,7 @@ def gen_dummy_pages():
         page.add_revision(rev)
 
     print('Pages generated successfully')
+
 
 # Create all tables
 _setup()

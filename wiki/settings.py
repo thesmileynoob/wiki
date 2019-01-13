@@ -7,8 +7,8 @@ from .page import new_session
 
 
 _SETTINGS = {
-        'theme': ['light', 'dark'],
-        }
+    'theme': ['light', 'dark'],
+}
 
 
 def _setup():
@@ -36,8 +36,7 @@ def _setting_exists(name: str) -> bool:
 def _setting_is_valid(name: str, value: str) -> bool:
     assert _setting_exists(name), "ERROR: FIX THIS!"
     return value in _SETTINGS[name]
-    
-    
+
 
 class Setting:
     def __init__(self, name: str, value: str):
@@ -46,10 +45,10 @@ class Setting:
         if not _setting_is_valid(name, value):
             msg = 'Invalid setting value: ' + value
             msg += '\n  Possible values: {' + \
-            ','.join(_SETTINGS[name]) + '}'
+                ','.join(_SETTINGS[name]) + '}'
             raise Exception(msg)
 
-        self.name: str  = name
+        self.name: str = name
         self.value: str = value
 
     def save(self):
@@ -70,6 +69,12 @@ def get_setting(name: str) -> Setting:
         return Setting.from_row(row)
 
 
+def get_setting_values(name: str) -> [str]:
+    assert _setting_exists(name), "Invalid setting name"
+    with new_session() as cur:
+        SQL = "SELECT * FROM settings WHERE name=?"
+        row = cur.execute(SQL, (name,)).fetchone()
+        return Setting.from_row(row)
+
+
 _setup()
-
-
