@@ -71,10 +71,7 @@ def get_setting(name: str) -> Setting:
 
 def get_setting_values(name: str) -> [str]:
     assert _setting_exists(name), "Invalid setting name"
-    with new_session() as cur:
-        SQL = "SELECT * FROM settings WHERE name=?"
-        row = cur.execute(SQL, (name,)).fetchone()
-        return Setting.from_row(row)
+    return _SETTINGS[name]
 
 
 _setup()

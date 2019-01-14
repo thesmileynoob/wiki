@@ -7,7 +7,7 @@ import wasabi
 import flask
 
 from wiki.page import *  # TODO only import needed stuff
-from wiki.settings import get_setting, Setting
+from wiki.settings import get_setting, Setting, get_setting_values
 
 log = wasabi.Printer()
 flask_app = flask.Flask('Wiki')
@@ -39,7 +39,10 @@ def view_homepage():
 
 @flask_app.route('/settings')
 def view_settings():
-    return flask.render_template('settings.html')
+    ctx = {
+            'themes': get_setting_values('theme')
+            }
+    return flask.render_template('settings.html', **ctx)
 
 
 @flask_app.route('/wiki/<int:id>')

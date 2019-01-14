@@ -1,13 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Wiki Settings</title>
-</head>
-<body>
-    <input type="checkbox" name="theme" id="theme">
-    <label for="theme">Enable dark theme</label>
-</body>
-</html>
+{% extends "components/base.html" %}
+{% block title %} Settings {% endblock title %}
+
+{% block content %}
+
+<form action="/api/settings" method="post" id="settings_form">
+    <h3>Settings</h3>
+    <fieldset>
+        <legend>Display</legend>
+        <div style="border: 1px solid green">
+            <h3>Theme</h3>
+            {% for name in themes %}
+            {% set themeid = loop.index %} {# Generate an id for labelling radio buttons #}
+            <label style="display: inline" for="theme{{themeid}}">{{ name | title }}</label>
+            <input checked id="theme{{themeid}}" type="radio" name="theme" value="{{ name }}"/>
+            {% endfor %}
+        </div>
+    </fieldset>
+
+
+    <button type="submit">Save Settings</button>
+</form>
+
+{% endblock content %}
