@@ -18,7 +18,8 @@
         <link rel="stylesheet" href="/static/css/buttons.css">
 
         <!-- Dynamic css -->
-        <link rel="stylesheet" href="{% block css %}{% endblock css %}">
+        {% block css %}
+        {% endblock css %}
 
         <!-- Dynamic external headers  -->
         {% block head %} {% endblock head %}
@@ -48,6 +49,8 @@
         <div id="contentbox">
             {% block content %} OVERRIDE THIS! {% endblock content %}
         </div>
+
+        {% block script %} {% endblock script %}
 
     </body>
 
