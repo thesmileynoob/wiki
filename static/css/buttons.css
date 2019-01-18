@@ -1,11 +1,28 @@
 button {
     outline: none;
-    border: none;
-    padding: 7px 10px;
-    background-color: gainsboro;
+    border: 1px solid rgba(0,0,0,0); /* avoids popping on :hover */
+    border-radius: 5px;
+    padding: 5px 8px;
+    background-color: var(--theme-link-color);
+    color: var(--theme-secondary-color);
 }
 
 button:hover {
-    background-color: gray;
+    border: 1px solid var(--theme-link-color);
+    color: var(--theme-text-color);
+    background-color: var(--theme-primary-color);
     cursor: pointer;
+    border-radius: 0px;
+}
+
+button:focus {
+    border: 1px solid var(--theme-link-color);
+    color: var(--theme-text-color);
+    background-color: var(--theme-primary-color);
+    cursor: pointer;
+    border-radius: 0px;
+}
+
+button:active {
+    border-color: red;
 }
