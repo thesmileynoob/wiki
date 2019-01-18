@@ -2,56 +2,11 @@
 
 {% block title %} {{ v_title }} {% endblock title %}
 
-{% block css %} 
-<link rel="stylesheet" href="/static/css/newpage.css">  
-{% endblock css %}
-
-
 
 {% block content %}
 
-<form action="/api/new" method="post" id="add_page_form">
-    <h3> Add a page</h3>
-    <fieldset>
-        <div>
-            <input autofocus placeholder="Title" type="text" name="page_title" id="page_title">
-        </div>
-
-        <div>
-            <input placeholder="Note" type="text" name="page_note" id="page_note">
-        </div>
-
-        <div>
-            <textarea placeholder="Body" name="rev_body" id="rev_body"></textarea>
-        </div>
-    </fieldset>
-
-    <button type="submit">Create!</button>
-</form>
-    <button id="preview_button" onclick="show_preview()">Preview</button>
-    <button id="close_preview_button" onclick="close_preview()">Close Preview</button>
-
-<div id="preview" hidden></div>
+{% import 'components/editor.html' as editor %}
+{{ editor.editor('add_page_form', v_action) }}
 
 {% endblock content %}
 
-{% block script %}
-<script src="/static/js/markdown-it.js"></script>
-    <script>
-        const md = window.markdownit();
-        const preview = document.getElementById('preview');
-        const textarea = document.getElementById('rev_body');
-        console.log('hello');
-        
-        var show_preview = function(e) {
-            preview.innerHTML = md.render(textarea.value.trim());
-            preview.hidden = false;
-        }
-        
-        var close_preview = function(e) {
-            preview.hidden = true;
-        }
-        
-
-    </script>
-{% endblock script %}

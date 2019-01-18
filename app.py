@@ -64,7 +64,7 @@ def view_page(id):
 @flask_app.route('/new')
 def view_new_page():
     """ Add a new page """
-    ctx = {'v_title': 'New Page'}
+    ctx = {'v_title': 'New Page', 'v_action': '/api/new'}
     return flask.render_template('newpage.html', **ctx)
 
 
@@ -81,6 +81,7 @@ def view_edit_page(id):
     rev = page.get_last_rev()
     ctx = {
         'v_title': f'Edit Page {id}',
+        'v_action': '/api/edit/' + str(id),
         'v_page_id': page.id,
         'v_page_title': page.title,
         'v_page_note': page.note,
