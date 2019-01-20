@@ -33,6 +33,7 @@ var close_preview = function(e) {
 
 /** Keyboard shortcuts */
 let timeout = 0;
+let timeout_id = undefined;
 document.querySelector('body').addEventListener('keyup',
     function(e) {
         if(e.key == 'Escape' || e.code == 'Escape') {
@@ -44,10 +45,11 @@ document.querySelector('body').addEventListener('keyup',
             if (timeout) {
                 e.preventDefault();
                 timeout = 0;
+                clearTimeout(timeout_id);
                 show_preview();
             } else {
                 timeout = 1;
-                setTimeout(() => {timeout = 0}, 1500);
+                timeout_id = setTimeout(() => {timeout = 0}, 1500);
             }
         }
     }
