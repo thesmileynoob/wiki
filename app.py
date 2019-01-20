@@ -94,13 +94,13 @@ def view_edit_page(id):
 def api_search_page(title):
     page = get_page(title=title)
     if page:
-        return flask.redirect(flask.url_for('view_page'), id=page.id)
+        return flask.redirect(flask.url_for('view_page', id=page.id))
     else:
         ctx = {
             'v_title': 'Page not found',
             'v_message': f"Page '{title}' not found"
         }
-        return flask.redirect('redirect.html', **ctx)
+        return flask.render_template('redirect.html', **ctx)
 
 
 @flask_app.route('/api/new', methods=['POST'])
