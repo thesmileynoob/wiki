@@ -166,10 +166,11 @@ def del_page_by_id(id: int):
 def gen_dummy_pages():
     with open('static/dummy_data.txt', 'r') as f:
         data = f.read()
-    bodies = data.split('======')
-    assert len(bodies) == 3
+    sep = ';;;;;'
+    bodies = data.split(sep)
+    assert len(bodies) == 4
 
-    titles = ['wiki', 'Website', 'Stock Market']
+    titles = ['wiki', 'Website', 'Stock Market', 'Markdown']
 
     for i, title in enumerate(titles):
         page = create_page(title, '')
