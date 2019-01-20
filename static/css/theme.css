@@ -20,6 +20,7 @@
     --theme-sidebar-link-color: var(--theme-link-color);
 
     --theme-border-color: rgba(0,0,0,0.4);
+    --theme-preview-border-color: rgba(255, 0, 0, 0.6);
 
     --topbar-height: 50px;
     --sidebar-width: 10em;
