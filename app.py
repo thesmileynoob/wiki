@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import shutil
 import time
 import json
 
@@ -8,6 +9,7 @@ import flask
 
 from wiki.page import *  # TODO only import needed stuff
 from wiki.settings import get_setting, Setting, get_setting_values
+from wiki.backup import create_backup
 
 log = wasabi.Printer()
 flask_app = flask.Flask('Wiki')
@@ -160,6 +162,18 @@ def api_page_delete(id):
 def api_generate_pages():
     gen_dummy_pages()
     return flask.redirect(flask.url_for('view_homepage'))
+
+
+@flask_app.route('/backup')
+def api_create_backup():
+    ok = create_backup()
+    if not ok:
+        log.fail('Failed to create backup!')
+        msg = 'Failed to create backup!'
+    else:
+        msg = 'Backup created successfully!'
+    ctx = { 'v_title': f'Backup Created', 'v_message': msg }
+    return flask.render_template('redirect.html', **ctx)
 
 
 flask_app.run()
