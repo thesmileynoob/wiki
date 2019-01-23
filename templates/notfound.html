@@ -1,0 +1,17 @@
+{% extends 'components/base.html' %}
+
+{% block title %} Not Found: {{ v_title }} {% endblock title %}
+
+{% block content %}
+
+<div>
+    <center>
+        <h3>
+            Page Not found: '{{v_title}}'
+        </h3>
+        <a href="/new">Click here to create a new page!</a>
+    </center>
+</div>
+
+
+{% endblock content %}

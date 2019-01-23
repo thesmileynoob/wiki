@@ -50,6 +50,10 @@ def view_settings():
 @flask_app.route('/wiki/<int:id>')
 def view_page(id):
     page = get_page(id=id)
+    if not page:
+        ctx = {'v_title': 'ID=' + str(id)}
+        return flask.render_template('notfound.html', **ctx), 404
+
     rev = page.get_last_rev()
 
     ctx = {
@@ -74,11 +78,8 @@ def view_new_page():
 def view_edit_page(id):
     page = get_page(id=id)
     if not page:
-        ctx = {
-            'v_title': f'Edit Page {id}',
-            'v_message': f'Page {id} does not exist'
-        }
-        return flask.redirect('redirect.html', v_message='Invalid page')
+        ctx = {'v_title': 'ID=' + str(id)}
+        return flask.render_template('notfound.html', **ctx), 404
 
     rev = page.get_last_rev()
     ctx = {
@@ -93,16 +94,13 @@ def view_edit_page(id):
 
 
 @flask_app.route('/wiki/<title>')
-def api_search_page(title):
+def api_search_page(title: str):
     page = get_page(title=title)
     if page:
         return flask.redirect(flask.url_for('view_page', id=page.id))
     else:
-        ctx = {
-            'v_title': 'Page not found',
-            'v_message': f"Page '{title}' not found"
-        }
-        return flask.render_template('redirect.html', **ctx)
+        ctx = { 'v_title': title }
+        return flask.render_template('notfound.html', **ctx), 404
 
 
 @flask_app.route('/api/new', methods=['POST'])
@@ -150,6 +148,7 @@ def api_edit_page(id):
 
 @flask_app.route('/delete/<int:id>')
 def api_page_delete(id):
+    # TODO handle errors!
     del_page_by_id(id)
     ctx = {
         'v_title': f'Delete Page {id}',
