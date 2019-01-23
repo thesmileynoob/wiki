@@ -10,7 +10,7 @@ import flask
 from wiki.page import *  # TODO only import needed stuff
 from wiki.settings import get_setting, Setting, get_setting_values
 from wiki.backup import create_backup
-from wiki.components import Topbar
+from wiki.components import Topbar, Sidebar, Link
 
 log = wasabi.Printer()
 flask_app = flask.Flask('Wiki')
@@ -35,6 +35,8 @@ def view_homepage():
         'v_num_pages': len(pages),
         'v_num_revs': num_revs,
         'v_num_abandoned': abandoned,
+        'v_sidebar': Sidebar(),
+        'v_topbar': None
     }
 
     return flask.render_template('home.html', **ctx)
@@ -43,7 +45,9 @@ def view_homepage():
 @flask_app.route('/settings')
 def view_settings():
     ctx = {
-            'themes': get_setting_values('theme')
+            'themes': get_setting_values('theme'),
+            'v_sidebar': Sidebar(),
+            'v_topbar': None
             }
     return flask.render_template('settings.html', **ctx)
 
@@ -52,22 +56,27 @@ def view_settings():
 def view_page(id):
     page = get_page(id=id)
     if not page:
-        ctx = {'v_title': 'ID=' + str(id)}
+        ctx = {
+                'v_title': 'ID=' + str(id),
+                'v_sidebar': Sidebar(),
+                'v_topbar': None
+                }
         return flask.render_template('notfound.html', **ctx), 404
 
     rev = page.get_last_rev()
 
     tb = Topbar()
-    tb.add_action(Topbar.Action('Edit', f'/edit/{page.id}'))
-    tb.add_action(Topbar.Action('Info', f'/info/{page.id}'))
-    tb.add_action(Topbar.Action('Delete', f'/delete/{page.id}'))
+    tb.add_link(Link('Edit', f'/edit/{page.id}'))
+    tb.add_link(Link('Info', f'/info/{page.id}'))
+    tb.add_link(Link('Delete', f'/delete/{page.id}'))
     ctx = {
         'v_title': page.title,  # Tab title
         'v_page_id': page.id,
         'v_page_title': page.title,
         'v_timestamp': time.ctime(rev.timestamp),
         'v_body': rev.body,
-        'v_topbar': tb
+        'v_topbar': tb,
+        'v_sidebar': None,
     }
 
     return flask.render_template('page.html', **ctx)
@@ -76,7 +85,12 @@ def view_page(id):
 @flask_app.route('/new')
 def view_new_page():
     """ Add a new page """
-    ctx = {'v_title': 'New Page', 'v_action': '/api/new'}
+    ctx = {
+            'v_title': 'New Page',
+            'v_action': '/api/new',
+            'v_sidebar': Sidebar(),
+            'v_topbar': None
+            }
     return flask.render_template('newpage.html', **ctx)
 
 
@@ -84,7 +98,11 @@ def view_new_page():
 def view_edit_page(id):
     page = get_page(id=id)
     if not page:
-        ctx = {'v_title': 'ID=' + str(id)}
+        ctx = {
+                'v_title': 'ID=' + str(id),
+                'v_sidebar': Sidebar(),
+                'v_topbar': None
+                }
         return flask.render_template('notfound.html', **ctx), 404
 
     rev = page.get_last_rev()
@@ -94,7 +112,9 @@ def view_edit_page(id):
         'v_page_id': page.id,
         'v_page_title': page.title,
         'v_page_note': page.note,
-        'v_rev_body': rev.body
+        'v_rev_body': rev.body,
+        'v_sidebar': Sidebar(),
+        'v_topbar': None
     }
     return flask.render_template('editpage.html', **ctx)
 
@@ -105,7 +125,11 @@ def api_search_page(title: str):
     if page:
         return flask.redirect(flask.url_for('view_page', id=page.id))
     else:
-        ctx = { 'v_title': title }
+        ctx = { 
+                'v_title': title,
+                'v_sidebar': Sidebar(),
+                'v_topbar': None
+                }
         return flask.render_template('notfound.html', **ctx), 404
 
 
@@ -158,7 +182,9 @@ def api_page_delete(id):
     del_page_by_id(id)
     ctx = {
         'v_title': f'Delete Page {id}',
-        'v_message': f'Successful'
+        'v_message': f'Successful',
+        'v_sidebar': Sidebar(),
+        'v_topbar': None
     }
     return flask.render_template('redirect.html',  **ctx)
 
@@ -177,7 +203,12 @@ def api_create_backup():
         msg = 'Failed to create backup!'
     else:
         msg = 'Backup created successfully!'
-    ctx = { 'v_title': f'Backup Created', 'v_message': msg }
+    ctx = { 
+            'v_title': f'Backup Created',
+            'v_message': msg,
+            'v_sidebar': Sidebar(),
+            'v_topbar': None
+            }
     return flask.render_template('redirect.html', **ctx)
 
 

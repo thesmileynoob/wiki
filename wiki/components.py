@@ -1,13 +1,28 @@
-class Topbar:
-    class Action:
-        def __init__(self, name: str, href: str):
-            self.name = name
-            self.href = href
+class Link:
+    def __init__(self, name: str, href: str):
+        self.name = name
+        self.href = href
 
+class Bar:
     def __init__(self):
-        self.actions = []
+        self.links = []
 
-    def add_action(self, action: Action):
-        assert action, 'Action required!'
-        self.actions.append(action)
+    def add_link(self, link: Link):
+        assert link, 'Link required!'
+        self.links.append(link)
 
+
+class Topbar(Bar):
+    pass
+
+
+class Sidebar(Bar):
+    def __init__(self, defaults = True):
+        super().__init__()
+
+        if defaults:
+            self.add_link(Link('Home', '/'))
+            self.add_link(Link('Add Page', '/new'))
+            self.add_link(Link('Settings', '/settings'))
+            self.add_link(Link('Generate Dummy Pages', '/generate'))
+            self.add_link(Link('Create Backup', '/backup'))

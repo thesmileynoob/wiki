@@ -3,8 +3,8 @@
 <div id="topbar">
 
     <div id="action_box">
-        {% for action in tbctx.actions %}
-            <a href="{{action.href}}">{{action.name}}</a>
+        {% for link in tbctx.links %}
+            <a href="{{link.href}}">{{link.name}}</a>
         {% endfor %}
     </div>
 

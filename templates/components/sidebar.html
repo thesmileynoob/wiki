@@ -1,3 +1,4 @@
+{% macro sidebar(sbctx=None) %}
 <div id="sidebar">
     <!-- Logo -->
     <div id="logobox">
@@ -7,12 +8,10 @@
         <a id="logo_title" href="/">Wiki</a>
     </div>
 
-    <!-- Navbar -->
     <nav>
-        <a href="/">Home</a>
-        <a href="/new">Add Page</a>
-        <a href="/settings">Settings</a>
-        <a href="/generate">Generate Dummy Pages</a>
-        <a href="/backup">Create Backup</a>
+        {% for link in sbctx.links %}
+        <a href="{{link.href}}">{{link.name}}</a>
+        {% endfor %}
     </nav>
 </div>
+{% endmacro %}

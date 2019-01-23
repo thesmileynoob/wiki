@@ -32,11 +32,14 @@
     </head>
 
     <body>
-        {% include 'components/sidebar.html' %}
+        {% block sidebar %}
+            {% import 'components/sidebar.html' as sidebar %}
+            {{ sidebar.sidebar(v_sidebar) }}
+        {% endblock %}
 
         {% block topbar %}
             {% import 'components/topbar.html' as topbar %}
-            {{ topbar.topbar(None) }}
+            {{ topbar.topbar(v_topbar) }}
         {% endblock %}
 
         <div id="contentbox">
