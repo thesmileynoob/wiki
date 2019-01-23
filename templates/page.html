@@ -2,13 +2,10 @@
 
 {% block title %} {{ v_title }} {% endblock title %}
 
-{% block actions %} 
-<!-- Figure out how to perform these actions -->
-<a href="/edit/{{ v_page_id }}">Edit</a>
-<a href="/history/{{ v_page_id }}">Info</a>
-<!-- TODO: Modal to confirm deletion -->
-<a href="/delete/{{ v_page_id }}">Delete</a>
-{% endblock actions %}
+{% block topbar %} 
+{% import 'components/topbar.html' as topbar %}
+{{ topbar.topbar(v_topbar) }}
+{% endblock topbar %}
 
 
 {% block content %}

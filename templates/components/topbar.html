@@ -1,12 +1,11 @@
-<!-- See TODO in components/base.html -->
+{% macro topbar(tbctx=None) %}
 
-<!-- 
 <div id="topbar">
 
     <div id="action_box">
-        {% block actions %}
-            override
-        {% endblock actions %}
+        {% for action in tbctx.actions %}
+            <a href="{{action.href}}">{{action.name}}</a>
+        {% endfor %}
     </div>
 
     <div id="search_box">
@@ -16,4 +15,5 @@
     </div>
 
 </div>
- -->
+
+{% endmacro %}

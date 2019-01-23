@@ -10,6 +10,7 @@ import flask
 from wiki.page import *  # TODO only import needed stuff
 from wiki.settings import get_setting, Setting, get_setting_values
 from wiki.backup import create_backup
+from wiki.components import Topbar
 
 log = wasabi.Printer()
 flask_app = flask.Flask('Wiki')
@@ -56,12 +57,17 @@ def view_page(id):
 
     rev = page.get_last_rev()
 
+    tb = Topbar()
+    tb.add_action(Topbar.Action('Edit', f'/edit/{page.id}'))
+    tb.add_action(Topbar.Action('Info', f'/info/{page.id}'))
+    tb.add_action(Topbar.Action('Delete', f'/delete/{page.id}'))
     ctx = {
         'v_title': page.title,  # Tab title
         'v_page_id': page.id,
         'v_page_title': page.title,
         'v_timestamp': time.ctime(rev.timestamp),
-        'v_body': rev.body
+        'v_body': rev.body,
+        'v_topbar': tb
     }
 
     return flask.render_template('page.html', **ctx)
