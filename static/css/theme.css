@@ -19,6 +19,9 @@
     --theme-link-color: #0645ad;
     --theme-sidebar-link-color: var(--theme-link-color);
 
+    --theme-margin-right: 30px;
+    --theme-margin-bottom: 30px;
+
     --theme-border-color: rgba(0,0,0,0.4);
     --theme-preview-border-color: rgba(255, 0, 0, 0.6);
 

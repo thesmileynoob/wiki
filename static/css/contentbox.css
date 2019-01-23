@@ -1,0 +1,28 @@
+#contentbox {
+    margin: 0;
+    margin-right: var(--theme-margin-right);
+    margin-bottom: var(--theme-margin-bottom);
+    margin-left: var(--sidebar-width);
+    background-color: var(--theme-secondary-color);
+    border: 1px solid var(--theme-border-color);
+    min-height: 500px;
+    overflow-x: scroll;
+}
+
+#contentbox #page {
+    padding: 20px;
+}
+
+#contentbox #page hr {
+    border-top: 1px solid #eee;
+}
+
+#contentbox #page #title {
+    font-family: monospace;
+    font-size: 2em;
+}
+
+#contentbox #page #content {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.2em;
+}
