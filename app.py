@@ -25,7 +25,7 @@ def view_homepage():
     check = 0
     num_revs = 0
     for page in pages:
-        page.revcount = page.get_rev_count()
+        page.revcount = len(page.revs)
         check += page.revcount
         num_revs += page.revcount
     abandoned = num_revs - check
@@ -39,14 +39,12 @@ def view_homepage():
     return flask.render_template('home.html', ctx=ctx)
 
 
-@flask_app.route('/wiki/<int:id>')
-def view_page(id):
-    page = get_page(id=id)
+@flask_app.route('/wiki/<int:pid>')
+def view_page(pid):
+    page = get_page(pid)
     if not page:
         ctx = Context()
         return flask.render_template('notfound.html', ctx=ctx), 404
-
-    rev = page.get_last_rev()
 
     ctx = Context()
     ctx.title = page.title
@@ -56,8 +54,8 @@ def view_page(id):
     # ctx.page = page
     ctx.page_id = page.id
     ctx.page_title = page.title
-    ctx.timestamp = time.ctime(rev.timestamp)
-    ctx.body = rev.body
+    ctx.timestamp = page.timestamp()
+    ctx.body = page.body()
 
     return flask.render_template('page.html', ctx=ctx)
 
@@ -71,24 +69,23 @@ def view_new_page():
     return flask.render_template('newpage.html', ctx=ctx)
 
 
-@flask_app.route('/edit/<int:id>')
-def view_edit_page(id):
-    page = get_page(id=id)
+@flask_app.route('/edit/<int:pid>')
+def view_edit_page(pid):
+    page = get_page(pid)
     if not page:
         ctx = Context()
-        ctx.title = 'Not Found: ID=' + str(id)
+        ctx.title = 'Not Found: ID=' + str(pid)
 
         return flask.render_template('notfound.html', ctx=ctx), 404
 
-    rev = page.get_last_rev()
     ctx = Context()
-    ctx.title = f'Edit Page {id}'
-    ctx.action = '/api/edit/' + str(id)
+    ctx.title = f'Edit Page {pid}'
+    ctx.action = '/api/edit/' + str(pid)
     # ctx.page = page
     ctx.page_id = page.id
     ctx.page_title = page.title
     ctx.page_note = page.note
-    ctx.rev_body = rev.body
+    ctx.rev_body = page.body()
     
     return flask.render_template('editpage.html', ctx=ctx)
 
@@ -100,7 +97,7 @@ def api_search_page(title: str):
         return flask.redirect(flask.url_for('view_page', id=page.id))
     else:
         ctx = Context()
-        ctx.title = title
+        ctx.title = page.title
 
         return flask.render_template('notfound.html', ctx=ctx), 404
 
@@ -126,11 +123,11 @@ def api_new_page():
     rev.timestamp = int(time.time())
     page.add_revision(rev)
 
-    return flask.redirect(flask.url_for('view_page', id=page.id))
+    return flask.redirect(flask.url_for('view_page', pid=page.id))
 
 
-@flask_app.route('/api/edit/<int:id>', methods=['POST'])
-def api_edit_page(id):
+@flask_app.route('/api/edit/<int:pid>', methods=['POST'])
+def api_edit_page(pid):
     r = flask.request
     page_id = r.form.get('page_id', '')
     page_title = r.form.get('page_title', '').strip()
@@ -139,21 +136,21 @@ def api_edit_page(id):
 
     # TODO Check for changes
 
-    page = get_page(id=id)
+    page = get_page(pid)
     rev = Revision()
     rev.body = rev_body
     rev.timestamp = int(time.time())
     page.add_revision(rev)
 
-    return flask.redirect(flask.url_for('view_page', id=id))
+    return flask.redirect(flask.url_for('view_page', pid=pid))
 
 
-@flask_app.route('/delete/<int:id>')
-def api_page_delete(id):
+@flask_app.route('/delete/<int:pid>')
+def api_page_delete(pid):
     # TODO handle errors!
-    del_page_by_id(id)
+    del_page_by_id(pid)
     ctx = Context()
-    ctx.title = f'Delete Page {id}'
+    ctx.title = f'Delete Page {pid}'
     ctx.message = 'Successful'
 
     return flask.render_template('redirect.html',  ctx=ctx)

@@ -66,11 +66,13 @@ class Page:
         self.id: int = 0  # PK
         self.title: str = ''  # Unique, notnull
         self.note: str = ''
+        self.revs: [Revision] = []
 
     def __repr__(self):
-        return f"<Page(id: {self.id}, title: '{self.title}')>"
+        return f"<Page(id: {self.id}, title: '{self.title}', revcount: {{ len(self.revs) }})>"
 
     def add_revision(self, rev: Revision):
+        self.revs.insert(0, rev)
         SQL = """
         INSERT INTO revisions (page_id, timestamp, body)
         VALUES (?, ?, ?)
@@ -79,30 +81,14 @@ class Page:
             cur.execute(SQL, (self.id, rev.timestamp, rev.body))
             rev.id = cur.lastrowid
 
-    def get_last_rev(self):
-        SQL = "SELECT * FROM revisions WHERE page_id=? ORDER BY timestamp DESC"
-        with new_session() as cur:
-            row = cur.execute(SQL, (self.id,)).fetchone()
-            if row:
-                return Revision.from_row(row)
-            else:
-                return None
+    def last_rev(self) -> Revision:
+        return self.revs[0]
 
-    def get_rev_count(self):
-        SQL = "SELECT COUNT(*) FROM revisions WHERE page_id=?"
-        with new_session() as cur:
-            res = cur.execute(SQL, (self.id,)).fetchone()
-            return res[0]
+    def body(self) -> str:
+        return self.last_rev().body
 
-    def get_all_revs(self):
-        SQL = "SELECT * FROM revisions WHERE page_id=?"
-        with new_session() as cur:
-            rows = cur.execute(SQL).fetchall()
-            if rows:
-                revs = [Revision.from_row(row) for row in rows]
-                return revs
-            else:
-                return []
+    def timestamp(self) -> str:
+        return time.ctime(self.last_rev().timestamp)
 
     @staticmethod
     def from_row(row):
@@ -130,28 +116,42 @@ def create_page(title: str, note: str) -> Page:
 
 
 def get_page(id: int = 0, title: str = '') -> Page:
+    """ return page by id with its revs attached """
     with new_session() as cur:
         if id:
             SQL = "SELECT * FROM pages WHERE id=?"
             row = cur.execute(SQL, (id,)).fetchone()
-            if row:
-                return Page.from_row(row)
         elif title:
             SQL = "SELECT * FROM pages WHERE title=?"
             row = cur.execute(SQL, (title,)).fetchone()
-            if row:
-                return Page.from_row(row)
-        return None
+        else:
+            assert 0, "This shouldn't happen"
+
+        if not row:
+            return None
+
+        page =  Page.from_row(row)
+        page.revs = _get_page_revs(page.id)
+        return page
+
+
+def _get_page_revs(pid: int) -> [Revision]:
+    """ return a list of all revisions of page in desc ord """
+    SQL = "SELECT * FROM revisions WHERE page_id=? ORDER BY timestamp DESC"
+    with new_session() as cur:
+        res = cur.execute(SQL, (pid, )).fetchall()
+        if not res:
+            assert 0, "No revs found: pid=" + str(id)
+        return [Revision.from_row(row) for row in res]
 
 
 def get_all_pages() -> [Page]:
     with new_session() as cur:
-        rows = cur.execute("SELECT * FROM PAGES")
-        if rows:
-            pages = [Page.from_row(row) for row in rows]
-            return pages
-        else:
+        pids = cur.execute("SELECT id FROM PAGES").fetchall()
+        if not pids:
             return []
+        else:
+            return [get_page(pid[0]) for pid in pids]
 
 
 def del_page_by_id(id: int):
