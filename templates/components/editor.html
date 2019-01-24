@@ -1,21 +1,25 @@
-{% macro editor(form_id='', action='', title='', note='', body='') %}
+{% macro editor(form_id='', action='', page=None) %}
 
 <div id="editor">
     <form action="{{action}}" method="POST" id="{{form_id}}">
 
         <div class="field">
             <label for="page_title">Title</label>
-            <input autofocus type="text" name="page_title" id="page_title" value="{{title}}">
+            <input autofocus type="text" name="page_title" id="page_title" value="{{ page.title }}">
         </div>
 
         <div class="field">
             <label for="page_note">Note</label>
-            <input type="text" name="page_note" id="page_note" value="{{note}}">
+            <input type="text" name="page_note" id="page_note" value="{{ page.note }}">
         </div>
 
         <div class="field">
             <label for="rev_body">Revision</label>
-            <textarea name="rev_body" id="rev_body">{{body}}</textarea>
+            {% if page %}
+                <textarea name="rev_body" id="rev_body">{{ page.body() }}</textarea>
+            {% else %}
+                <textarea name="rev_body" id="rev_body"></textarea>
+            {% endif %}
         </div>
 
         <div class="field">
