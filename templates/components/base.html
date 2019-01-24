@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-        <title>Wiki: {% block title %}{% endblock title %}</title>
+        <title>Wiki: {{ ctx.title }}</title>
 
         <link rel="shortcut icon" href="/static/images/favicon.ico" type="image/x-icon">
 
@@ -34,12 +34,12 @@
     <body>
         {% block sidebar %}
             {% import 'components/sidebar.html' as sidebar %}
-            {{ sidebar.sidebar(v_sidebar) }}
+            {{ sidebar.sidebar(ctx.sidebar) }}
         {% endblock %}
 
         {% block topbar %}
             {% import 'components/topbar.html' as topbar %}
-            {{ topbar.topbar(v_topbar) }}
+            {{ topbar.topbar(ctx.topbar) }}
         {% endblock %}
 
         <div id="contentbox">

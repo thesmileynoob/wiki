@@ -19,7 +19,7 @@
         </thead>
         <tbody>
 
-            {% for page in v_pages %}
+            {% for page in ctx.pages %}
             <tr>
                 <td>{{ page.id }}</td>
                 <td>
@@ -39,9 +39,9 @@
 
 <div>
     <h1>info</h1>
-    <h4>Num pages: {{ v_num_pages }}</h4>
-    <h4>Num revs: {{ v_num_revs }}</h4>
-    <h4>Abandoned revs: {{ v_num_abandoned }}</h4>
+    <h4>Num pages: {{ ctx.num_pages }}</h4>
+    <h4>Num revs: {{ ctx.num_revs }}</h4>
+    <h4>Abandoned revs: {{ ctx.num_abandoned }}</h4>
 </div>
 
 

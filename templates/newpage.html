@@ -1,12 +1,9 @@
 {% extends 'components/base.html' %}
 
-{% block title %} {{ v_title }} {% endblock title %}
-
-
 {% block content %}
 
 {% import 'components/editor.html' as editor %}
-{{ editor.editor('add_page_form', v_action) }}
+{{ editor.editor('add_page_form', ctx.action) }}
 
 {% endblock content %}
 

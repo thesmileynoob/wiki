@@ -1,16 +1,12 @@
 {% extends 'components/base.html' %}
 
-{% block title %} {{ v_title }} {% endblock title %}
-
-
-
 {% block content %}
 
 <div id="page">
-    <div id="title">{{  v_page_title  }}</div>
-    <small> {{ v_timestamp }} </small>
+    <div id="title">{{  ctx.page_title  }}</div>
+    <small> {{ ctx.timestamp }} </small>
     <hr>
-    <div id="content">{{ v_body }}</div>
+    <div id="content">{{ ctx.body }}</div>
 </div>
 
 {% endblock content %}

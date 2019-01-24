@@ -10,7 +10,7 @@ import flask
 from wiki.page import *  # TODO only import needed stuff
 from wiki.settings import get_setting, Setting, get_setting_values
 from wiki.backup import create_backup
-from wiki.components import Topbar, Sidebar, Link
+from wiki.components import Context, Topbar, Sidebar, Link
 
 log = wasabi.Printer()
 flask_app = flask.Flask('Wiki')
@@ -30,93 +30,67 @@ def view_homepage():
         num_revs += page.revcount
     abandoned = num_revs - check
 
-    ctx = {
-        'v_pages': pages,
-        'v_num_pages': len(pages),
-        'v_num_revs': num_revs,
-        'v_num_abandoned': abandoned,
-        'v_sidebar': Sidebar(),
-        'v_topbar': None
-    }
+    ctx = Context()
+    ctx.pages = pages
+    ctx.num_pages = len(pages)
+    ctx.num_revs = num_revs
+    ctx.num_abandoned = abandoned # TODO clean this up
 
-    return flask.render_template('home.html', **ctx)
-
-
-@flask_app.route('/settings')
-def view_settings():
-    ctx = {
-            'themes': get_setting_values('theme'),
-            'v_sidebar': Sidebar(),
-            'v_topbar': None
-            }
-    return flask.render_template('settings.html', **ctx)
+    return flask.render_template('home.html', ctx=ctx)
 
 
 @flask_app.route('/wiki/<int:id>')
 def view_page(id):
     page = get_page(id=id)
     if not page:
-        ctx = {
-                'v_title': 'ID=' + str(id),
-                'v_sidebar': Sidebar(),
-                'v_topbar': None
-                }
-        return flask.render_template('notfound.html', **ctx), 404
+        ctx = Context()
+        return flask.render_template('notfound.html', ctx=ctx), 404
 
     rev = page.get_last_rev()
 
-    tb = Topbar()
-    tb.add_link(Link('Edit', f'/edit/{page.id}'))
-    tb.add_link(Link('Info', f'/info/{page.id}'))
-    tb.add_link(Link('Delete', f'/delete/{page.id}'))
-    ctx = {
-        'v_title': page.title,  # Tab title
-        'v_page_id': page.id,
-        'v_page_title': page.title,
-        'v_timestamp': time.ctime(rev.timestamp),
-        'v_body': rev.body,
-        'v_topbar': tb,
-        'v_sidebar': None,
-    }
+    ctx = Context()
+    ctx.title = page.title
+    ctx.topbar.add_link(Link('Edit', f'/edit/{page.id}'))
+    ctx.topbar.add_link(Link('Info', f'/info/{page.id}'))
+    ctx.topbar.add_link(Link('Delete', f'/delete/{page.id}'))
+    # ctx.page = page
+    ctx.page_id = page.id
+    ctx.page_title = page.title
+    ctx.timestamp = time.ctime(rev.timestamp)
+    ctx.body = rev.body
 
-    return flask.render_template('page.html', **ctx)
+    return flask.render_template('page.html', ctx=ctx)
 
 
 @flask_app.route('/new')
 def view_new_page():
-    """ Add a new page """
-    ctx = {
-            'v_title': 'New Page',
-            'v_action': '/api/new',
-            'v_sidebar': Sidebar(),
-            'v_topbar': None
-            }
-    return flask.render_template('newpage.html', **ctx)
+    ctx = Context()
+    ctx.title = 'New Page'
+    ctx.action = '/api/new'
+
+    return flask.render_template('newpage.html', ctx=ctx)
 
 
 @flask_app.route('/edit/<int:id>')
 def view_edit_page(id):
     page = get_page(id=id)
     if not page:
-        ctx = {
-                'v_title': 'ID=' + str(id),
-                'v_sidebar': Sidebar(),
-                'v_topbar': None
-                }
-        return flask.render_template('notfound.html', **ctx), 404
+        ctx = Context()
+        ctx.title = 'Not Found: ID=' + str(id)
+
+        return flask.render_template('notfound.html', ctx=ctx), 404
 
     rev = page.get_last_rev()
-    ctx = {
-        'v_title': f'Edit Page {id}',
-        'v_action': '/api/edit/' + str(id),
-        'v_page_id': page.id,
-        'v_page_title': page.title,
-        'v_page_note': page.note,
-        'v_rev_body': rev.body,
-        'v_sidebar': Sidebar(),
-        'v_topbar': None
-    }
-    return flask.render_template('editpage.html', **ctx)
+    ctx = Context()
+    ctx.title = f'Edit Page {id}'
+    ctx.action = '/api/edit/' + str(id)
+    # ctx.page = page
+    ctx.page_id = page.id
+    ctx.page_title = page.title
+    ctx.page_note = page.note
+    ctx.rev_body = rev.body
+    
+    return flask.render_template('editpage.html', ctx=ctx)
 
 
 @flask_app.route('/wiki/<title>')
@@ -125,12 +99,10 @@ def api_search_page(title: str):
     if page:
         return flask.redirect(flask.url_for('view_page', id=page.id))
     else:
-        ctx = { 
-                'v_title': title,
-                'v_sidebar': Sidebar(),
-                'v_topbar': None
-                }
-        return flask.render_template('notfound.html', **ctx), 404
+        ctx = Context()
+        ctx.title = title
+
+        return flask.render_template('notfound.html', ctx=ctx), 404
 
 
 @flask_app.route('/api/new', methods=['POST'])
@@ -180,13 +152,11 @@ def api_edit_page(id):
 def api_page_delete(id):
     # TODO handle errors!
     del_page_by_id(id)
-    ctx = {
-        'v_title': f'Delete Page {id}',
-        'v_message': f'Successful',
-        'v_sidebar': Sidebar(),
-        'v_topbar': None
-    }
-    return flask.render_template('redirect.html',  **ctx)
+    ctx = Context()
+    ctx.title = f'Delete Page {id}'
+    ctx.message = 'Successful'
+
+    return flask.render_template('redirect.html',  ctx=ctx)
 
 
 @flask_app.route('/generate')
@@ -203,13 +173,11 @@ def api_create_backup():
         msg = 'Failed to create backup!'
     else:
         msg = 'Backup created successfully!'
-    ctx = { 
-            'v_title': f'Backup Created',
-            'v_message': msg,
-            'v_sidebar': Sidebar(),
-            'v_topbar': None
-            }
-    return flask.render_template('redirect.html', **ctx)
+    ctx = Context()
+    ctx.title = 'Backup Created'
+    ctx.message = msg
+
+    return flask.render_template('redirect.html', ctx=ctx)
 
 
 flask_app.run()

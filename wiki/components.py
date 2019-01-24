@@ -26,3 +26,11 @@ class Sidebar(Bar):
             self.add_link(Link('Settings', '/settings'))
             self.add_link(Link('Generate Dummy Pages', '/generate'))
             self.add_link(Link('Create Backup', '/backup'))
+
+
+class Context:
+    """ Namespace for templates """
+    def __init__(self):
+        self.title: str = ''
+        self.topbar: Topbar = Topbar()
+        self.sidebar: Sidebar = Sidebar()
