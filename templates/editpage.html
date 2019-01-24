@@ -3,7 +3,7 @@
 {% block content %}
 
 {% import 'components/editor.html' as editor %}
-{{ editor.editor('add_page_form', ctx.action, ctx.page_title,
-            ctx.page_note, ctx.rev_body) }}
+{{ editor.editor('add_page_form', ctx.action, ctx.page.title,
+            ctx.page.note, ctx.page.body()) }}
 
 {% endblock content %}

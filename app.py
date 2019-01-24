@@ -48,14 +48,12 @@ def view_page(pid):
 
     ctx = Context()
     ctx.title = page.title
+
     ctx.topbar.add_link(Link('Edit', f'/edit/{page.id}'))
     ctx.topbar.add_link(Link('Info', f'/info/{page.id}'))
     ctx.topbar.add_link(Link('Delete', f'/delete/{page.id}'))
-    # ctx.page = page
-    ctx.page_id = page.id
-    ctx.page_title = page.title
-    ctx.timestamp = page.timestamp()
-    ctx.body = page.body()
+
+    ctx.page = page
 
     return flask.render_template('page.html', ctx=ctx)
 
@@ -81,11 +79,7 @@ def view_edit_page(pid):
     ctx = Context()
     ctx.title = f'Edit Page {pid}'
     ctx.action = '/api/edit/' + str(pid)
-    # ctx.page = page
-    ctx.page_id = page.id
-    ctx.page_title = page.title
-    ctx.page_note = page.note
-    ctx.rev_body = page.body()
+    ctx.page = page
     
     return flask.render_template('editpage.html', ctx=ctx)
 

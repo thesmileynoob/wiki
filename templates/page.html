@@ -3,10 +3,10 @@
 {% block content %}
 
 <div id="page">
-    <div id="title">{{  ctx.page_title  }}</div>
-    <small> {{ ctx.timestamp }} </small>
+    <div id="title">{{  ctx.page.title  }}</div>
+    <small> {{ ctx.page.timestamp() }} </small>
     <hr>
-    <div id="content">{{ ctx.body }}</div>
+    <div id="content">{{ ctx.page.body() }}</div>
 </div>
 
 {% endblock content %}
