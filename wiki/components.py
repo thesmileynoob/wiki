@@ -23,7 +23,7 @@ class Sidebar(Bar):
         if defaults:
             self.add_link(Link('Home', '/'))
             self.add_link(Link('Add Page', '/new'))
-            self.add_link(Link('Settings', '/settings'))
+            # self.add_link(Link('Settings', '/settings'))
             self.add_link(Link('Generate Dummy Pages', '/generate'))
             self.add_link(Link('Create Backup', '/backup'))
 
