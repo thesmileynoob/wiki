@@ -154,6 +154,17 @@ def get_all_pages() -> [Page]:
             return [get_page(pid[0]) for pid in pids]
 
 
+def get_page_index() -> [(int, str)]:
+    """ return the list of tuple(id, title) of all pages """
+    SQL = "SELECT id, title FROM pages"
+    with new_session() as cur:
+        rows = cur.execute(SQL).fetchall()
+        if not rows:
+            return []
+        else:
+            return [(row[0], row[1]) for row in rows]
+
+
 def del_page_by_id(id: int):
     page = get_page(id=id)
     assert page, "Page(id = %d) not found!" % id
