@@ -87,19 +87,29 @@ def view_edit_page(pid):
 
 @flask_app.route('/wiki/<query_title>')
 def api_search_page(query_title: str):
-    page_index = get_page_index()
-    all_titles = [title for _, title in page_index]
-    result = difflib.get_close_matches(query_title, all_titles, n = 1)
-    if result:
-        # Page exists for sure
-        idx = all_titles.index(result[0])
-        pid, _ = page_index[idx]
+    pid = search_page_id(query_title)
+    if pid:
         return flask.redirect(flask.url_for('view_page', pid=pid))
-
     else:
         ctx = Context()
         ctx.title = "Not Found: " + query_title
         return flask.render_template('notfound.html', ctx=ctx), 404
+
+
+@flask_app.route('/search')
+def api_search():
+    req = flask.request
+    query_title = req.args.get('title', '')
+    if query_title:
+        pid = search_page_id(query_title)
+        if pid:
+            return flask.redirect(flask.url_for('view_page', pid=pid))
+        else:
+            ctx = Context()
+            ctx.title = "Not Found: " + query_title
+            return flask.render_template('notfound.html', ctx=ctx), 404
+    else:
+        return flask.redirect(flask.url_for('view_homepage'))
 
 
 @flask_app.route('/api/new', methods=['POST'])
