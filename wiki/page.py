@@ -122,7 +122,7 @@ def get_page(id: int = 0, title: str = '') -> Page:
             SQL = "SELECT * FROM pages WHERE id=?"
             row = cur.execute(SQL, (id,)).fetchone()
         elif title:
-            SQL = "SELECT * FROM pages WHERE title=?"
+            SQL = "SELECT * FROM pages WHERE title LIKE ?"
             row = cur.execute(SQL, (title,)).fetchone()
         else:
             assert 0, "This shouldn't happen"
