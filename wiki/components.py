@@ -3,6 +3,7 @@ class Link:
         self.name = name
         self.href = href
 
+
 class Bar:
     def __init__(self):
         self.links = []
@@ -17,7 +18,7 @@ class Topbar(Bar):
 
 
 class Sidebar(Bar):
-    def __init__(self, defaults = True):
+    def __init__(self, defaults=True):
         super().__init__()
 
         if defaults:
@@ -30,6 +31,7 @@ class Sidebar(Bar):
 
 class Context:
     """ Namespace for templates """
+
     def __init__(self):
         self.title: str = ''
         self.topbar: Topbar = Topbar()

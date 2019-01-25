@@ -35,7 +35,7 @@ def view_homepage():
     ctx.pages = pages
     ctx.num_pages = len(pages)
     ctx.num_revs = num_revs
-    ctx.num_abandoned = abandoned # TODO clean this up
+    ctx.num_abandoned = abandoned  # TODO clean this up
 
     return flask.render_template('home.html', ctx=ctx)
 
@@ -81,7 +81,7 @@ def view_edit_page(pid):
     ctx.title = f'Edit Page {pid}'
     ctx.action = '/api/edit/' + str(pid)
     ctx.page = page
-    
+
     return flask.render_template('editpage.html', ctx=ctx)
 
 

@@ -131,7 +131,7 @@ def get_page(id: int = 0, title: str = '') -> Page:
         if not row:
             return None
 
-        page =  Page.from_row(row)
+        page = Page.from_row(row)
         page.revs = _get_page_revs(page.id)
         return page
 
@@ -170,7 +170,7 @@ def search_page_id(query_title) -> int:
     """ return id of page with matching `title` """
     page_index = get_page_index()
     all_titles = [title for _, title in page_index]
-    result = difflib.get_close_matches(query_title, all_titles, n = 1)
+    result = difflib.get_close_matches(query_title, all_titles, n=1)
     if result:
         # Page exists for sure
         idx = all_titles.index(result[0])

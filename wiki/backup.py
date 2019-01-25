@@ -4,6 +4,7 @@ import time
 
 BACKUPDIR = 'backup'
 
+
 def create_backup() -> bool:
     """ Create backup of DBNAME in backup/
     return True on success
@@ -22,6 +23,5 @@ def create_backup() -> bool:
         msg = 'Failed to create backup!'
     else:
         msg = 'Backup created successfully: <b>' + fname + '</b>'
-    ctx = { 'v_title': f'Backup Created', 'v_message': msg }
+    ctx = {'v_title': f'Backup Created', 'v_message': msg}
     return flask.render_template('redirect.html', **ctx)
-
