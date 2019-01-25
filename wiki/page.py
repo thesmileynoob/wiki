@@ -1,6 +1,7 @@
 import json
 import time
 import sqlite3
+import difflib
 from contextlib import contextmanager
 
 # Internals
@@ -163,6 +164,20 @@ def get_page_index() -> [(int, str)]:
             return []
         else:
             return [(row[0], row[1]) for row in rows]
+
+
+def search_page_id(query_title) -> int:
+    """ return id of page with matching `title` """
+    page_index = get_page_index()
+    all_titles = [title for _, title in page_index]
+    result = difflib.get_close_matches(query_title, all_titles, n = 1)
+    if result:
+        # Page exists for sure
+        idx = all_titles.index(result[0])
+        pid, _ = page_index[idx]
+        return pid
+    else:
+        return None
 
 
 def del_page_by_id(id: int):
