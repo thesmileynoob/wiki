@@ -88,10 +88,10 @@ def view_edit_page(pid):
 def api_search_page(title: str):
     page = get_page(title=title)
     if page:
-        return flask.redirect(flask.url_for('view_page', id=page.id))
+        return flask.redirect(flask.url_for('view_page', pid=page.id))
     else:
         ctx = Context()
-        ctx.title = page.title
+        ctx.title = "Not Found: " + title
 
         return flask.render_template('notfound.html', ctx=ctx), 404
 
