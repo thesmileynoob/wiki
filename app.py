@@ -3,6 +3,7 @@ import os
 import shutil
 import time
 import json
+import difflib
 
 import wasabi
 import flask
@@ -84,15 +85,20 @@ def view_edit_page(pid):
     return flask.render_template('editpage.html', ctx=ctx)
 
 
-@flask_app.route('/wiki/<title>')
-def api_search_page(title: str):
-    page = get_page(title=title)
-    if page:
-        return flask.redirect(flask.url_for('view_page', pid=page.id))
+@flask_app.route('/wiki/<query_title>')
+def api_search_page(query_title: str):
+    page_index = get_page_index()
+    all_titles = [title for _, title in page_index]
+    result = difflib.get_close_matches(query_title, all_titles, n = 1)
+    if result:
+        # Page exists for sure
+        idx = all_titles.index(result[0])
+        pid, _ = page_index[idx]
+        return flask.redirect(flask.url_for('view_page', pid=pid))
+
     else:
         ctx = Context()
-        ctx.title = "Not Found: " + title
-
+        ctx.title = "Not Found: " + query_title
         return flask.render_template('notfound.html', ctx=ctx), 404
 
 
