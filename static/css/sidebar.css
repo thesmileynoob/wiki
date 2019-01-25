@@ -19,10 +19,9 @@
 }
 
 #sidebar #logobox #logo_title {
-    font-size: 55px;
-    font-family: logoFont;
+    font-size: 40px;
+    font-family: 'Lobster', 'Bitter', logoFont;
     color: var(--theme-logo-text-color);
-    text-decoration: none;
 }
 
 #sidebar nav {
