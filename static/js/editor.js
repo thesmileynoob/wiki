@@ -2,6 +2,7 @@ const preview_box_id = 'preview_box';
 
 const md = window.markdownit();
 const preview_box = document.getElementById('preview_box');
+const preview_btn = document.getElementById('preview_button');
 
 /** Form input */
 const inp_title = document.querySelector('#editor #page_title');
@@ -15,7 +16,7 @@ const prv_content = document.querySelector(`#${preview_box_id} #page #content`);
 
 /** Update preview with current input */
 var update_preview = function() {
-    prv_title.innerHTML = md.render(inp_title.value);
+    prv_title.innerHTML = inp_title.value;
     prv_timestamp.innerHTML = new Date();
     prv_content.innerHTML = md.render(inp_textarea.value.trim());
 }
@@ -29,6 +30,16 @@ var show_preview = function(e) {
 /** hide preview_box */
 var close_preview = function(e) {
     preview_box.hidden = true;
+}
+
+var toggle_preview = function(e) {
+    if(preview_box.hidden) {
+        show_preview();
+        preview_button.innerHTML = 'Close Preview'
+    } else {
+        close_preview();
+        preview_button.innerHTML = 'Preview'
+    }
 }
 
 /** Keyboard shortcuts */
