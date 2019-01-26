@@ -1,4 +1,44 @@
+/*BITTER */
 @font-face {
-    font-family: logoFont;
-    src: url('/static/fonts/logo_font.otf');
+    font-family: 'Bitter';
+    font-style: italic;
+    font-weight: 400;
+    src: url('/static/fonts/Bitter/Bitter-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Bitter';
+    font-style: normal;
+    font-weight: 400;
+    src: url('/static/fonts/Bitter/Bitter-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Bitter';
+    font-style: normal;
+    font-weight: bold;
+    src: url('/static/fonts/Bitter/Bitter-Bold.ttf');
+}
+
+/*OPEN SANS*/
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url('/static/fonts/Open_Sans/OpenSans-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: bold;
+    src: url('/static/fonts/Open_Sans/OpenSans-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: italic;
+    font-weight: 400;
+    src: url('/static/fonts/Open_Sans/OpenSans-Italic.ttf');
 }
