@@ -60,11 +60,6 @@
     animation-fill-mode: both;
 }
 
-#editor button {
-}
-
-#editor button:hover {
-}
 
 #editor #preview_box {
     position: absolute;
