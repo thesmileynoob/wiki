@@ -42,3 +42,22 @@
     font-weight: 400;
     src: url('/static/fonts/Open_Sans/OpenSans-Italic.ttf');
 }
+
+@font-face {
+    font-family: 'Open Sans';
+    font-weight: lighter;
+    src: url('/static/fonts/Open_Sans/OpenSans-Light.ttf');
+}
+
+@font-face {
+    font-family: 'Open Sans LightItalic';
+    font-weight: 400;
+    src: url('/static/fonts/Open_Sans/OpenSans-LightItalic.ttf');
+}
+
+
+@font-face {
+    font-family: 'Open Sans SemiBold';
+    font-weight: 400;
+    src: url('/static/fonts/Open_Sans/OpenSans-SemiBold.ttf');
+}

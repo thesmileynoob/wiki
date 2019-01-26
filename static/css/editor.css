@@ -17,12 +17,15 @@
 }
 
 #editor form input {
-    font-family: monospace;
     border: 1px solid rgba(0, 0, 0, 0.3);
     width: 100%; /* todo: input box goes out of .field  */
     font-size: 1.2em;
     border: none;
     border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+#editor form #page_title {
+    font-family: 'Bitter';
 }
 
 #editor form textarea {
@@ -36,8 +39,7 @@
     resize: vertical;
     overflow: auto;
 
-    font-family: monospace;
-    font-size: 1.2em;
+    font-family: 'Open Sans SemiBold';
 }
 
 @keyframes form-focus{
@@ -85,23 +87,5 @@
     text-decoration: underline dotted;
     text-align: center;
     border: 1px dotted;
-}
-
-#editor #preview_box #page {
-    padding: 20px;
-}
-
-#editor #preview_box #page hr {
-    border-top: 1px solid #eee;
-}
-
-#editor #preview_box #page #title {
-    font-family: monospace;
-    font-size: 2em;
-}
-
-#editor #preview_box #page #content {
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 1.2em;
 }
 

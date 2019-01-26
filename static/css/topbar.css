@@ -5,6 +5,8 @@
 }
 
 #topbar #action_box {
+    font-family: 'Open Sans';
+    font-weight: lighter;
     display: inline-block;
     position: absolute;
     bottom: 0;
@@ -31,6 +33,7 @@
 }
 
 #topbar #search_box input {
+    font-family: 'Bitter';
     background: var(--theme-secondary-color);
     padding: 5px;
     color: var(--theme-text-color); 

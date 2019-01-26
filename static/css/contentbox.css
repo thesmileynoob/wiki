@@ -10,7 +10,7 @@
 }
 
 #contentbox #page {
-    padding: 20px;
+    padding: 10px 20px;
 }
 
 #contentbox #page hr {
@@ -18,11 +18,16 @@
 }
 
 #contentbox #page #title {
-    font-family: monospace;
-    font-size: 2em;
+    font-family: 'Bitter';
+    font-weight: bold;
+    font-size: 2.2em;
+}
+
+#contentbox #page #timestamp {
+    font-family: 'Open Sans LightItalic';
+    font-size: 0.9em;
 }
 
 #contentbox #page #content {
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 1.2em;
+    font-family: 'Open Sans', 'Noto Sans', 'Roboto', 'Times New Roman', Times, serif;
 }

@@ -19,12 +19,14 @@
 }
 
 #sidebar #logobox #logo_title {
+    font-family: 'Bitter'; 
+    font-style: italic;
     font-size: 40px;
-    font-family: 'Lobster', 'Bitter', logoFont;
     color: var(--theme-logo-text-color);
 }
 
 #sidebar nav {
+    font-family: 'Bitter', 'Open Sans';
     margin: 10px;
     padding: 5px;
     border: 1px solid var(--theme-border-color);
