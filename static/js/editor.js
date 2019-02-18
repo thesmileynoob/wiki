@@ -25,20 +25,20 @@ var update_preview = function() {
 var show_preview = function(e) {
     update_preview();
     preview_box.hidden = false;
+    preview_button.innerHTML = 'Close Preview'
 }
 
 /** hide preview_box */
 var close_preview = function(e) {
     preview_box.hidden = true;
+    preview_button.innerHTML = 'Preview'
 }
 
 var toggle_preview = function(e) {
     if(preview_box.hidden) {
         show_preview();
-        preview_button.innerHTML = 'Close Preview'
     } else {
         close_preview();
-        preview_button.innerHTML = 'Preview'
     }
 }
 
