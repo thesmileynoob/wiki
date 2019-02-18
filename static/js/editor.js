@@ -43,25 +43,17 @@ var toggle_preview = function(e) {
 }
 
 /** Keyboard shortcuts */
-let timeout = 0;
-let timeout_id = undefined;
 document.querySelector('body').addEventListener('keyup',
     function(e) {
+        console.log(e.key)
+        console.log(e)
         if(e.key == 'Escape' || e.code == 'Escape') {
             // Close preview 'ESC'
             e.preventDefault();
             close_preview();
-        } else if(e.key == 'Shift') {
-            // Show preview 'Shift x2'
-            if (timeout) {
-                e.preventDefault();
-                timeout = 0;
-                clearTimeout(timeout_id);
-                show_preview();
-            } else {
-                timeout = 1;
-                timeout_id = setTimeout(() => {timeout = 0}, 1500);
-            }
+        } else if(e.key == ' ' && e.ctrlKey == true) {
+            e.preventDefault();
+            show_preview();
         }
     }
 );
